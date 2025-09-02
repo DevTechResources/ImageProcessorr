@@ -11,10 +11,8 @@ const LandingPage = ({ onNavigate }) => {
       <header className="header">
         <div className="container header-content">
           <div className="logo-section">
-            <div className="logo-box">
-              <span className="logo-text">TR</span>
-            </div>
-            <span className="brand-name">TechResources</span>
+            <span className="brand-name"><img src="ImageProcessor/frontend/src/components/image/TechResources.png" alt="" /></span>
+
           </div>
           <nav className="navigation">
             <button onClick={() => onNavigate('home')} className="nav-link nav-active">
@@ -79,39 +77,30 @@ const LandingPage = ({ onNavigate }) => {
             {/* Eliminador de Fondo */}
             <div className="feature-card">
               <div className="feature-icon blue">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
               </div>
               <h3 className="feature-title">Eliminador de Fondo</h3>
               <p className="feature-description">
-                Remueve automáticamente el fondo de cualquier imagen usando inteligencia artificial. 
+                Remueve automáticamente el fondo de cualquier imagen con tecnología AI avanzada.
                 Perfecto para productos, retratos y diseños profesionales.
               </p>
-              <ul className="feature-list">
-                <li>• Procesamiento automático</li>
-                <li>• Alta precisión en bordes</li>
-                <li>• Preserva transparencia</li>
-              </ul>
             </div>
 
-            {/* Redimensionador */}
+            {/* Redimensionamiento */}
             <div className="feature-card">
               <div className="feature-icon green">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                 </svg>
               </div>
-              <h3 className="feature-title">Redimensionador Inteligente</h3>
+              <h3 className="feature-title">Redimensionamiento</h3>
               <p className="feature-description">
-                Cambia el tamaño de tus imágenes a cualquier dimensión manteniendo la calidad. 
-                Ideal para web, redes sociales y impresión.
+                Ajusta las dimensiones de tus imágenes a medidas exactas.
+                Soporte para formatos cuadrados y rectangulares con preservación de calidad.
               </p>
-              <ul className="feature-list">
-                <li>• Dimensiones personalizables</li>
-                <li>• Preserva calidad de imagen</li>
-                <li>• Formatos cuadrados y rectangulares</li>
-              </ul>
+              
             </div>
 
             {/* Procesamiento Masivo */}
@@ -123,14 +112,9 @@ const LandingPage = ({ onNavigate }) => {
               </div>
               <h3 className="feature-title">Procesamiento Masivo</h3>
               <p className="feature-description">
-                Procesa múltiples imágenes simultáneamente. Carga archivos ZIP y descarga 
-                todos los resultados en un solo archivo comprimido.
+                Procesa cientos de imágenes simultáneamente. 
+                Sube archivos ZIP y descarga resultados organizados. Sin límites de cantidad.
               </p>
-              <ul className="feature-list">
-                <li>• Carga múltiple de archivos</li>
-                <li>• Soporte para archivos ZIP</li>
-                <li>• Descarga masiva optimizada</li>
-              </ul>
             </div>
 
             {/* Optimización Automática */}
@@ -142,14 +126,9 @@ const LandingPage = ({ onNavigate }) => {
               </div>
               <h3 className="feature-title">Optimización Automática</h3>
               <p className="feature-description">
-                Reduce automáticamente el peso de las imágenes hasta un 60% sin perder calidad visual. 
-                Perfecto para mejorar la velocidad de tu sitio web.
+                Procesa cientos de imágenes simultáneamente. 
+                Sube archivos ZIP y descarga resultados organizados. Sin límites de cantidad.
               </p>
-              <ul className="feature-list">
-                <li>• Compresión inteligente</li>
-                <li>• Mejora Core Web Vitals</li>
-                <li>• Mantiene calidad visual</li>
-              </ul>
             </div>
           </div>
         </div>
