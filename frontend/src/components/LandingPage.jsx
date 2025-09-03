@@ -1,4 +1,5 @@
 import React from 'react';
+import logoImage from './image/TechResources.png';
 
 const LandingPage = ({ onNavigate }) => {
   const handleStartProcessing = () => {
@@ -11,8 +12,11 @@ const LandingPage = ({ onNavigate }) => {
       <header className="header">
         <div className="container header-content">
           <div className="logo-section">
-            <span className="brand-name"><img src="ImageProcessor/frontend/src/components/image/TechResources.png" alt="" /></span>
-
+            <img 
+              src={logoImage}
+              alt="TechRessources Logo"
+              className="logo-image"
+            />
           </div>
           <nav className="navigation">
             <button onClick={() => onNavigate('home')} className="nav-link nav-active">
