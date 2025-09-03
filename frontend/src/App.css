@@ -3,15 +3,12 @@ body {
   line-height: 1.6;
   background: #F1F3F3;
   overflow-x: hidden;
-
 }
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
-
 .app-background {
   min-height: 100vh;
   background: #F1F3F3;
@@ -42,4 +39,101 @@ body {
  height: 45px;
  width: auto;
  object-fit: contain;
+}
+.navigation{
+  display: flex;
+  gap: 8px;
+}
+.nav-link{
+  position: relative;
+  background: transparent;
+  border: none;
+  color: #FFF6F6;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: medium;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.nav-link:hover{
+  background-color: rgba(255, 255, 255, 0.1)
+}
+.nav-active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+}
+
+/*Revisar*/
+.hero-section{
+  padding: 80px 0;
+  background-color: #F1F3F3;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60;
+  align-items: center;
+  max-height: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #081425;
+  margin: 0;
+}
+.hero-highlight {
+  background: linear-gradient(135deg, #152645 0%, #4e69a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+.hero-description {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0.9;
+}
+.cta-button {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 12px;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: fit-content;
+}
+/*Revisar end*/
+.features-section {
+  padding: 100px 0;
+  background: chocolate;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.feature-card {
+  border-radius: 20px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
 }
