@@ -65,25 +65,28 @@ body {
   color: #fff;
   font-weight: 600;
 }
-
-/*Revisar*/
 .hero-section{
   padding: 80px 0;
   background-color: #F1F3F3;
 }
 .hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60;
+  display: flex;
+  flex-direction: row;
+  gap: 60px;
   align-items: center;
+  justify-content: space-between;
   max-height: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 77px;
+  flex-wrap: wrap;
 }
 .hero-text {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  flex: 1;
+  align-items: flex-start;
+  order: 1;
 }
 .hero-title {
   font-size: 3.5rem;
@@ -91,6 +94,7 @@ body {
   line-height: 1.1;
   color: #081425;
   margin: 0;
+  align-self: stretch;
 }
 .hero-highlight {
   background: linear-gradient(135deg, #152645 0%, #4e69a8 100%);
@@ -101,9 +105,138 @@ body {
 }
 .hero-description {
   font-size: 1.2rem;
+  color: #152645;
   line-height: 1.6;
   margin: 0;
   opacity: 0.9;
+  align-self: stretch;
+}
+.cta-button{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #081425 0%, #152645 50%, #294489 100%);
+  color: #FFFFFF;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(7, 16, 29, 0.3);
+  text-decoration: none;
+  width: fit-content;
+  align-self: flex-start;
+}
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(8, 20, 37, 0.4);
+}
+.cta-button:active{
+ transform: translateY(-1px);
+}
+.cta-icon{
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+.cta-button:hover .cta-icon{
+  transform: translateX(4px);
+}
+.hero-preview{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  order: 2;
+}
+.preview-card{
+  background: linear-gradient(135deg, #152645 0%, #4e69a8 100%);
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 20px 60px rgba(131, 146, 167, 0.3);
+  transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
+}
+.preview-title{
+  color: #FFFFFF;
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin-bottom: 24px;
+  text-align: center;
+  align-items: center;
+}
+.preview-content{
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  backdrop-filter: blur(11px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.preview-placeholder{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+.preview-icon{
+  width: 60px;
+  height: 60px;
+  color: rgba(255, 255, 255, 0.6);
+  stroke-width: 1.5;
+}
+.preview-text{
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin: 0;
+  align-items: center;
+}
+/*Revisar*/
+.features-section {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #081425 0%, #152645 50%, #1F3867 100%);
+}
+.features-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.feature-card{
+  background: rgba(175, 175, 177, 0.568);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.feature-card:hover::before {
+  transform: translateX(100%);
 }
 .cta-button {
   display: inline-flex;
@@ -118,22 +251,19 @@ body {
   transition: all 0.3s ease;
   width: fit-content;
 }
-/*Revisar end*/
-.features-section {
-  padding: 100px 0;
-  background: chocolate;
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(8, 20, 37, 0.4);
 }
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+.cta-button:active {
+  transform: translateY(-1px);
 }
-.feature-card {
-  border-radius: 20px;
-  padding: 40px;
-  position: relative;
-  overflow: hidden;
+.cta-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
 }
+.cta-button:hover .cta-icon {
+  transform: translateX(4px);
+}
+
