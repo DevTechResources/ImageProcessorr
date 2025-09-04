@@ -47,8 +47,8 @@ const LandingPage = ({ onNavigate }) => {
               imágenes
             </h1>
             <p className="hero-description">
-              Elimina fondos y redimensiona tus imágenes de manera automática y profesional. 
-              Procesa múltiples archivos simultáneamente con nuestra tecnología avanzada.
+              Elimina fondos, redimensiona y optimiza tus imágenes de manera automática y profesional. 
+              Sin límites, sin complicaciones. Solo arrastra, procesa y descarga.
             </p>
             <button onClick={handleStartProcessing} className="cta-button">
               <span>Comenzar ahora</span>
