@@ -1,3 +1,4 @@
+/*------------------------------------LandingPage-----------------------------------*/
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
@@ -53,7 +54,7 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-size: medium;
-  font-weight: 500;
+  font-weight: 500px;
   transition: all 0.3s ease;
   text-decoration: none;
 }
@@ -154,10 +155,10 @@ body {
 }
 .preview-card{
   background: linear-gradient(135deg, #152645 0%, #4e69a8 100%);
-  border-radius: 24px;
-  padding: 40px;
+  border-radius: 50px;
+  padding: 50px;
   width: 100%;
-  max-width: 450px;
+  max-width: 430px;
   box-shadow: 0 20px 60px rgba(131, 146, 167, 0.3);
   transition: all 0.4s ease;
   display: flex;
@@ -201,7 +202,7 @@ body {
   margin: 0;
   align-items: center;
 }
-/*Revisar*/
+/*Revisar hoy */
 .features-section {
   padding: 100px 0;
   background: linear-gradient(135deg, #081425 0%, #152645 50%, #1F3867 100%);
@@ -212,14 +213,15 @@ body {
   gap: 40px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 10px;
 }
-.feature-card{
-  background: rgba(175, 175, 177, 0.568);
+.feature-card {
+  background: rgb(11, 20, 37, 1);
+  /*background: rgba(255, 255, 255, 0.05);*/
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 40px;
+  border-radius: 40px;
+  padding: 50px;
   transition: all 0.4s ease;
   position: relative;
   overflow: hidden;
@@ -238,32 +240,52 @@ body {
 .feature-card:hover::before {
   transform: translateX(100%);
 }
-.cta-button {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 12px;
-  border: none;
-  padding: 16px 32px;
-  border-radius: 12px;
-  font-size: 1.1rem;
+.feature-card:hover {
+  transform: translateY(-10px);
+  background: rgba(39, 14, 14, 0.08);
+  box-shadow: 0 10px px rgba(112, 120, 136, 0.3);
+}
+.feature-icon {
+  width: 100px;
+  height: 80px;
+  margin: 0 auto 35px;
+  border-radius: 50px;
+  /*background: linear-gradient(135deg, #d6dadd, #030303);*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.feature-icon svg {
+  width: 100px;
+  height: 90px;
+  color: #FFFFFF;
+}
+.feature-title {
+  color: #ccccd1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: fit-content;
+  margin-bottom: 16px;
+  margin: 0 0 16px 0;
 }
-.cta-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(8, 20, 37, 0.4);
-}
-.cta-button:active {
-  transform: translateY(-1px);
-}
-.cta-icon {
-  width: 20px;
-  height: 20px;
-  transition: transform 0.3s ease;
-}
-.cta-button:hover .cta-icon {
-  transform: translateX(4px);
+.feature-description {
+  color: rgb(155, 158, 158);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
 }
 
+/*-----------------------------------------ImagePage-------------------------------------*/
+
+
+
+/*-----------------------------------------HelpPage-------------------------------------*/
+
+.help-header{ 
+             
+}
+
+
+/*-----------------------------------------ImagePage-------------------------------------*/
