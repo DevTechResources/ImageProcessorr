@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import LandingPage from './components/LandingPage';
-import ImageProcessor from './components/ImageProcessor';
 import HelpPage from './components/HelpPage';
 import './App.css';
 
