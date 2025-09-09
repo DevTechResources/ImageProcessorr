@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import LandingPage from './components/LandingPage';
 import HelpPage from './components/HelpPage';
+import ContactPage from './components/ContactPage';
 import './App.css';
 
 const App = () => {
