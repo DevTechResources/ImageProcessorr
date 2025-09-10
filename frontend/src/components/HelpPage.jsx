@@ -103,7 +103,7 @@ const HelpPage = ({ onNavigate }) => {
 
               <div className="help-page-feature-item">
                 <div className="help-page-feature-icon-bg">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="47" height="37" fill="none" viewBox="0 0 47 37">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="54" height="48" fill="none" viewBox="0 0 47 37">
                     <path stroke="#F1F3F3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8.667V4.833c0-1.016.518-1.991 1.44-2.71C3.362 1.403 4.613 1 5.917 1h4.916m24.584 0h4.916c1.304 0 2.555.404 3.477 1.123.922.719 1.44 1.694 1.44 2.71v3.834m0 19.166v3.834c0 1.016-.518 1.991-1.44 2.71-.922.72-2.173 1.123-3.477 1.123h-4.916m-24.584 0H5.917c-1.304 0-2.555-.404-3.477-1.123-.922-.719-1.44-1.694-1.44-2.71v-3.834m12.292-17.25h19.666c1.358 0 2.459.858 2.459 1.917V24c0 1.058-1.101 1.917-2.459 1.917H13.292c-1.358 0-2.459-.859-2.459-1.917V12.5c0-1.059 1.101-1.917 2.459-1.917Z"/>
                   </svg>
                 </div>

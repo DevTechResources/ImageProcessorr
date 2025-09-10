@@ -283,7 +283,7 @@ body {
 
 /*-----------------------------------------HelpPage-------------------------------------*/
 /*@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');*/
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 .help-page-main{
   background: #f2f2f2;
   min-height: calc(100vh - 80px);
@@ -347,6 +347,7 @@ body {
   font-size: 1.1rem;
   font-weight: 500;
   color: #1C1C1C;
+  font-weight: 450;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
@@ -355,7 +356,6 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 10px;
-  opacity: 0.9;
 }
 .help-page-sidebar-btn:hover {
   background: #848486;
@@ -396,7 +396,7 @@ body {
   margin-bottom: 40px;
 }
 .help-page-step-card {
-  width: 690px;
+  width: 680px;
   height: 150px;
   background: #464C58;
   border-radius: 40px;
@@ -435,6 +435,7 @@ body {
   fill: none;
   font-size: 1rem;
   color: rgba(241, 245, 249, 0.85);
+  font-weight: 200; 
   margin: 0;
   line-height: 1.6;
 }
@@ -467,13 +468,220 @@ body {
   display: flex;
   background: #464C58;
   border-radius: 30px;
-  padding: 25px;
+  padding: 35px;
   text-align: center;
   flex-direction: column;
 }
+.help-page-feature-icon-bg {
+  background: transparent;
+  border-radius: 15px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 .help-page-feature-title{
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: #0B1425;
   margin: 0 0 8px 0;
+}
+.help-page-feature-desc{
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 200; 
+  margin: 0;
+  line-height: 1.2;
+  text-align: flex-start;
+}
+.help-page-section-subtitle{
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1C1C1C;
+  margin: 30px 0 15px 0;
+}
+.help-page-section-text{
+  font-size: 1rem;
+  color: #464C58;
+  margin: 0 0 25px 0;
+  line-height: 1.6;
+}
+.help-page-operation-cards{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 25px;
+}
+.help-page-operation-card{
+  background:  #464C58;
+  border-radius: 20px;
+  padding: 25px;
+}
+.help-page-operation-title{
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #0B1425;
+  margin: 0 0 12px 0;
+}
+.help-page-operation-desc{
+  font-size: 1rem;
+  fill: none;
+  color: rgba(241, 245, 249, 0.85);
+  font-weight: 200; 
+  margin: 0;
+  line-height: 1.6;
+}
+.help-page-format-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 23px;
+  margin: 20px 3px 30px 0;
+}
+.help-page-format-tag{
+  background: #62666E;
+  color: #F1F3F3;
+  font-weight: 200; 
+  padding: 11px 45px;
+  border-radius: 25px;
+  font-size: 1rem;
+}
+.help-page-output-format{
+  background: #62666E;
+  border-radius: 26px;
+  padding: 30px;
+  margin: 20px 0 30px 0;
+}
+.help-page-output-title{
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #0B1425;
+  margin: 0 0 12px 0;
+}
+.help-page-output-desc{
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 200; 
+  margin: 0;
+  line-height: 1.5;
+}
+.help-page-zip-desc{
+  font-size: 1rem;
+  color: #1C1C1C;
+  font-weight: 200; 
+  margin: 20px 0 25px 0;
+  line-height: 1.6;
+}
+.help-page-limits-box{
+  background: #FFFADF;
+  border: 2px solid #080806;
+  border-radius: 30px;
+  padding: 25px;
+  margin: 25px 0;
+}
+.help-page-limits-box h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #B8860B;
+  margin: 0 0 8px 0;
+}
+.help-page-limits-box p {
+  font-size: 1rem;
+  color: #8B7500;
+  margin: 0;
+  line-height: 1.5;
+}
+.help-page-faq-list{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.help-page-faq-item {
+  background: #F1F3F3;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid #E2E8F0;
+}
+.help-page-faq-question {
+  background: #9B9EA3;
+  font-weight: 600; 
+  width: 100%;
+  padding: 20px;
+  text-align: left;
+  font-size: 1.2rem;
+  color: #1C1C1C;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/*.help-page-faq-question:hover {
+  background: #9B9EA3;
+}*/
+.help-page-faq-icon{
+  font-size: 1.9rem;
+  color: #000000;
+  font-weight: 300;
+}
+.help-page-faq-answer{
+  padding: 0 20px 30px 20px;
+  color: #1C1C1C;
+  font-weight: 300; 
+  display: none;
+}
+.help-page-faq-answer.show {
+  display: block;
+}
+.help-page-problem-list{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 25px;
+}
+.help-page-problem-item{
+  background: #62666E;
+  border-radius: 26px;
+  padding: 30px;
+  margin: 4px ;
+  border-left: 4px solid #05082e;
+}
+.help-page-problem-title{
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #0B1425;
+  margin: 0 0 10px 0;
+}
+.help-page-problem-solution {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 200; 
+  margin: 0;
+  line-height: 1.5;
+}
+.help-page-tips-list{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 25px;
+}
+.help-page-tip-item{
+  background: #62666E;
+  border-radius: 26px;
+  padding: 30px;
+  margin: 4px ;
+  border-left: 4px solid #1d1e27;
+}
+.help-page-tip-title{
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #0B1425;
+  margin: 0 0 10px 0;
+}
+.help-page-tip-desc{
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 200; 
+  margin: 0;
+  line-height: 1.5;
 }
