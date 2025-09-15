@@ -1,19 +1,22 @@
-/*-------------------------------------------------------LandingPage-------------------------------------------------*/
+/*------------------------------------LandingPage-----------------------------------*/
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
   background: #F1F3F3;
   overflow-x: hidden;
 }
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
+
 .app-background {
   min-height: 100vh;
   background: #F1F3F3;
 }
+
 .header {
   background-color: #1C1C1C;
   width: 100vw;
@@ -25,27 +28,32 @@ body {
   top: 0;
   z-index: 100;
 }
+
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
 }
+
 .logo-section {
   display: flex;
   align-items: center;
   gap: 12px;
 }
+
 .logo-image {
- height: 45px;
- width: auto;
- object-fit: contain;
+  height: 45px;
+  width: auto;
+  object-fit: contain;
 }
-.navigation{
+
+.navigation {
   display: flex;
   gap: 8px;
 }
-.nav-link{
+
+.nav-link {
   position: relative;
   background: transparent;
   border: none;
@@ -58,18 +66,22 @@ body {
   transition: all 0.3s ease;
   text-decoration: none;
 }
-.nav-link:hover{
+
+.nav-link:hover {
   background-color: rgba(255, 255, 255, 0.1)
 }
+
 .nav-active {
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
   font-weight: 600;
 }
-.hero-section{
+
+.hero-section {
   padding: 80px 0;
   background-color: #F1F3F3;
 }
+
 .hero-grid {
   display: flex;
   flex-direction: row;
@@ -81,6 +93,7 @@ body {
   padding: 0 77px;
   flex-wrap: wrap;
 }
+
 .hero-text {
   display: flex;
   flex-direction: column;
@@ -89,6 +102,7 @@ body {
   align-items: flex-start;
   order: 1;
 }
+
 .hero-title {
   font-size: 3.5rem;
   font-weight: 700;
@@ -97,6 +111,7 @@ body {
   margin: 0;
   align-self: stretch;
 }
+
 .hero-highlight {
   background: linear-gradient(135deg, #152645 0%, #4e69a8 100%);
   -webkit-background-clip: text;
@@ -104,6 +119,7 @@ body {
   background-clip: text;
   position: relative;
 }
+
 .hero-description {
   font-size: 1.2rem;
   color: #152645;
@@ -112,7 +128,8 @@ body {
   opacity: 0.9;
   align-self: stretch;
 }
-.cta-button{
+
+.cta-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -131,29 +148,35 @@ body {
   width: fit-content;
   align-self: flex-start;
 }
+
 .cta-button:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(8, 20, 37, 0.4);
 }
-.cta-button:active{
- transform: translateY(-1px);
+
+.cta-button:active {
+  transform: translateY(-1px);
 }
-.cta-icon{
+
+.cta-icon {
   width: 20px;
   height: 20px;
   transition: transform 0.3s ease;
 }
-.cta-button:hover .cta-icon{
+
+.cta-button:hover .cta-icon {
   transform: translateX(4px);
 }
-.hero-preview{
+
+.hero-preview {
   display: flex;
   justify-content: center;
   align-items: center;
   flex: 1;
   order: 2;
 }
-.preview-card{
+
+.preview-card {
   background: linear-gradient(135deg, #152645 0%, #4e69a8 100%);
   border-radius: 50px;
   padding: 50px;
@@ -164,7 +187,8 @@ body {
   display: flex;
   flex-direction: column;
 }
-.preview-title{
+
+.preview-title {
   color: #FFFFFF;
   font-size: 1.4rem;
   font-weight: 400;
@@ -172,7 +196,8 @@ body {
   text-align: center;
   align-items: center;
 }
-.preview-content{
+
+.preview-content {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 40px 20px;
@@ -183,30 +208,36 @@ body {
   justify-content: center;
   align-items: center;
 }
-.preview-placeholder{
+
+.preview-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 15px;
 }
-.preview-icon{
+
+.preview-icon {
   width: 60px;
   height: 60px;
   color: rgba(255, 255, 255, 0.6);
   stroke-width: 1.5;
 }
-.preview-text{
+
+.preview-text {
   color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
   margin: 0;
   align-items: center;
 }
+
+/*Revisar hoy */
 .features-section {
   padding: 100px 0;
   background: linear-gradient(135deg, #081425 0%, #152645 50%, #1F3867 100%);
 }
-.features-grid{
+
+.features-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 40px;
@@ -214,8 +245,10 @@ body {
   margin: 0 auto;
   padding: 0 10px;
 }
+
 .feature-card {
   background: rgb(11, 20, 37, 1);
+  /*background: rgba(255, 255, 255, 0.05);*/
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 40px;
@@ -224,6 +257,7 @@ body {
   position: relative;
   overflow: hidden;
 }
+
 .feature-card::before {
   content: '';
   position: absolute;
@@ -235,14 +269,17 @@ body {
   transform: translateX(-100%);
   transition: transform 0.6s ease;
 }
+
 .feature-card:hover::before {
   transform: translateX(100%);
 }
+
 .feature-card:hover {
   transform: translateY(-10px);
   background: rgba(39, 14, 14, 0.08);
   box-shadow: 0 10px px rgba(112, 120, 136, 0.3);
 }
+
 .feature-icon {
   width: 100px;
   height: 80px;
@@ -252,11 +289,13 @@ body {
   align-items: center;
   justify-content: center;
 }
+
 .feature-icon svg {
   width: 100px;
   height: 90px;
   color: #FFFFFF;
 }
+
 .feature-title {
   color: #ccccd1;
   display: flex;
@@ -267,6 +306,7 @@ body {
   margin-bottom: 16px;
   margin: 0 0 16px 0;
 }
+
 .feature-description {
   color: rgb(155, 158, 158);
   font-size: 1rem;
@@ -524,79 +564,78 @@ body {
   margin: 0 0 20px 0;
   text-align: center;
 }
-.processor-dimensions-inputs{
+.processor-dimensions-inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   margin-bottom: 25px;
 }
-.processor-input-group{
+.processor-input-group {
   display: flex;
   flex-direction: column;
-   gap:8px;
+  gap: 8px;
 }
-.processor-input-label{
-  font-size: 1rem;
+.processor-input-label {
+  font-size: 0.9rem;
   text-align: center;
-  font-stretch: condensed;
-  font-weight: 200;
+  font-weight: 500;
   color: #FFFFFF;
   margin-bottom: 4px;
 }
-.processor-dimension-input{
-  background: #EBFEFE;
+.processor-dimension-input {
+  background: #FFFFFF;
   border: none;
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   font-size: 1rem;
   color: #000000;
   width: 100%;
-  box-sizing:border-box;
+  box-sizing: border-box;
   transition: all 0.3s ease;
 }
 .processor-dimension-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(91, 163, 255, 0.5);
 }
-.processor-process-btn{
+.processor-process-btn {
   background: #566582;
   color: #FFFFFF;
-  font-weight: 200;
   border: none;
-  padding: 12px 12px;
-  text-align: center;
-  border-radius: 18px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
 }
-.processor-process-btn:hover{
+.processor-process-btn:hover {
   background: #7B934D;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(123, 147, 77, 0.3);
 }
-.processor-results-section{
-  margin-top: 50px;
-  border-radius: 5px;
-  background: #DADBDB;
+.processor-results-section {
+  margin-top: 60px;
+  background: #FFFFFF;
+  border-radius: 9px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.4s ease-out;
 }
-.processor-results-header{
-  background: #1C1C1C; 
-  padding: 10px 30px;
+.processor-results-header {
+  background: #1C1C1C;
+  padding: 20px 30px;
   display: flex;
   align-items: center;
   gap: 15px;
 }
-.processor-results-icon{
+.processor-results-icon {
   color: #FFFFFF;
 }
 .processor-results-title {
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: #F1F3F3;
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: #FFFFFF;
   margin: 0;
   flex-grow: 1;
   text-align: center;
@@ -636,69 +675,81 @@ body {
   transform: translateY(-2px);
 }
 
-/*--------------------------------------------------------HelpPage---------------------------------------------------*/
+/*-----------------------------------------HelpPage-------------------------------------*/
+/*@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');*/
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-.help-page-main{
+
+.help-page-main {
   background: #f2f2f2;
   min-height: calc(100vh - 80px);
-  padding: 28px 0;
+  padding: 40px 0;
 }
-.help-page-container{
+
+.help-page-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
-.help-page-brand{
+
+.help-page-brand {
   margin-bottom: 15px;
   margin-top: -10px;
 }
-.help-page-header{
+
+.help-page-header {
   text-align: center;
   margin-bottom: 40px;
   background: #f2f2f2;
 }
-.help-page-title{
-  font-size: 4rem;
+
+.help-page-title {
+  font-size: 2.5rem;
   font-weight: 490;
   color: #000000;
   margin: 0 0 16px 0;
   line-height: 1.2;
 }
-.help-page-subtitle{
-  font-size: 1.1rem;  
+
+.help-page-subtitle {
+  font-size: 1rem;
   color: #152645;
   margin: 0;
   opacity: 0.8;
 }
-.help-page-layout{
+
+.help-page-layout {
   display: grid;
   grid-template-columns: 350px 1fr;
   gap: 40px;
-  align-items: start; 
+  align-items: start;
 }
+
 .help-page-sidebar {
   background: #FFFFFF;
   border-radius: 5px;
   padding: 30px 25px;
   box-shadow: 0 4px 20px rgba(131, 138, 156, 0.08);
 }
-.help-page-sidebar-title{
-  font-size: 1.8rem;
+
+.help-page-sidebar-title {
+  font-size: 1.5rem;
   font-weight: 600;
   color: #1C1C1C;
   margin: 0 0 30px 0;
 }
+
 .help-page-sidebar-nav {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
+
 .help-page-sidebar-btn {
   background: #D9D9D9;
   border: none;
   padding: 18.4px 24px;
   border-radius: 25px;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #1C1C1C;
   font-weight: 450;
@@ -711,60 +762,77 @@ body {
   justify-content: center;
   min-height: 10px;
 }
+
 .help-page-sidebar-btn:hover {
   background: #848486;
   transform: translateX(5px);
   color: #1c1c1c;
 }
+
 .help-page-sidebar-btn.active {
   background: #1C1C1C;
   color: #FFFFFF;
   font-weight: 600;
   box-shadow: 0 4px 15px rgba(31, 41, 55, 0.3);
 }
+
 .help-page-content-area {
   background: #FFFFFF;
   border-radius: 10px;
   min-height: 600px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
+
 .help-page-content {
   padding: 40px;
 }
+
 .help-page-content-title {
-  font-size: 2.2rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: #1C1C1C;
   margin: 0 0 16px 0;
 }
+
 .help-page-content-description {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: #464C58;
   margin: 0 0 30px 0;
   line-height: 1.6;
 }
+
 .help-page-steps-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
   margin-bottom: 40px;
   align-items: center;
 }
+
 .help-page-step-card {
-  width: 545px;
-  height: 156px;
+  width: 100%;
+  max-width: 550px;
+  height: auto;
+  min-height: 100px;
   background: #464C58;
-  border-radius: 40px;
-  padding: 30px;
+  border-radius: 20px;
+  padding: 20px 30px;
   display: flex;
   flex-direction: column;
-  gap: 0px;
+  gap: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
 }
+
+.help-page-step-card:hover {
+  transform: translateY(-2px);
+}
+
 .help-page-step-number {
   background: #0F172A;
   color: #FFFFFF;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -772,28 +840,31 @@ body {
   font-weight: 700;
   font-size: 0.8rem;
   flex-shrink: 0;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
+
 .help-page-step-content {
   flex: 1;
   width: 100%;
 }
+
 .help-page-step-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #0B1425;
-  margin: 0 0 5px 0;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
 }
+
 .help-page-step-description {
-  width: 492;
-  height: 35;
-  fill: none;
-  font-size: 1rem;
-  color: rgba(241, 245, 249, 0.85);
-  font-weight: 200; 
+  width: 100%;
+  font-size: 0.85rem;
+  color: rgba(241, 245, 249, 0.9);
+  font-weight: 300;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.4;
 }
+
 .help-page-info-box {
   background: #F2F2F2;
   border: 2px solid #242c2c;
@@ -801,25 +872,29 @@ body {
   padding: 25px;
   margin: 30px 0;
 }
+
 .help-page-info-box h4 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #1E293B;
   margin: 0 0 8px 0;
 }
+
 .help-page-info-box p {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #1C1C1C;
   margin: 0;
   line-height: 1.5;
 }
-.help-page-features-grid{
+
+.help-page-features-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 25px;
   margin-bottom: 30px;
 }
-.help-page-feature-item{
+
+.help-page-feature-item {
   display: flex;
   background: #464C58;
   border-radius: 30px;
@@ -827,6 +902,7 @@ body {
   text-align: center;
   flex-direction: column;
 }
+
 .help-page-feature-icon-bg {
   background: transparent;
   border-radius: 15px;
@@ -836,134 +912,154 @@ body {
   justify-content: center;
   flex-shrink: 0;
 }
-.help-page-feature-title{
-  font-size: 1.4rem;
+
+.help-page-feature-title {
+  font-size: 1.1rem;
   font-weight: 600;
   color: #0B1425;
   margin: 0 0 8px 0;
 }
-.help-page-feature-desc{
-  font-size: 1rem;
+
+.help-page-feature-desc {
+  font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.8);
-  font-weight: 200; 
+  font-weight: 200;
   margin: 0;
   line-height: 1.2;
   text-align: flex-start;
 }
-.help-page-section-subtitle{
-  font-size: 1.6rem;
+
+.help-page-section-subtitle {
+  font-size: 1.3rem;
   font-weight: 600;
   color: #1C1C1C;
   margin: 30px 0 15px 0;
 }
-.help-page-section-text{
-  font-size: 1rem;
+
+.help-page-section-text {
+  font-size: 0.9rem;
   color: #464C58;
   margin: 0 0 25px 0;
   line-height: 1.6;
 }
-.help-page-operation-cards{
+
+.help-page-operation-cards {
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin-top: 25px;
 }
-.help-page-operation-card{
-  background:  #464C58;
+
+.help-page-operation-card {
+  background: #464C58;
   border-radius: 20px;
   padding: 25px;
 }
-.help-page-operation-title{
-  font-size: 1.3rem;
+
+.help-page-operation-title {
+  font-size: 1.1rem;
   font-weight: 600;
   color: #0B1425;
   margin: 0 0 12px 0;
 }
-.help-page-operation-desc{
-  font-size: 1rem;
+
+.help-page-operation-desc {
+  font-size: 0.85rem;
   fill: none;
   color: rgba(241, 245, 249, 0.85);
-  font-weight: 200; 
+  font-weight: 200;
   margin: 0;
   line-height: 1.6;
 }
+
 .help-page-format-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 22px;
+  gap: 23px;
   margin: 20px 3px 30px 0;
 }
-.help-page-format-tag{
+
+.help-page-format-tag {
   background: #62666E;
   color: #F1F3F3;
-  font-weight: 200; 
+  font-weight: 200;
   padding: 11px 45px;
   border-radius: 25px;
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
-.help-page-output-format{
+
+.help-page-output-format {
   background: #62666E;
   border-radius: 26px;
   padding: 30px;
   margin: 20px 0 30px 0;
 }
-.help-page-output-title{
-  font-size: 1.3rem;
+
+.help-page-output-title {
+  font-size: 1.1rem;
   font-weight: 600;
   color: #0B1425;
   margin: 0 0 12px 0;
 }
-.help-page-output-desc{
-  font-size: 1rem;
+
+.help-page-output-desc {
+  font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.8);
-  font-weight: 200; 
+  font-weight: 200;
   margin: 0;
   line-height: 1.5;
 }
-.help-page-zip-desc{
-  font-size: 1rem;
+
+.help-page-zip-desc {
+  font-size: 0.9rem;
   color: #1C1C1C;
-  font-weight: 200; 
+  font-weight: 200;
   margin: 20px 0 25px 0;
   line-height: 1.6;
 }
-.help-page-limits-box{
+
+.help-page-limits-box {
   background: #FFFADF;
   border: 2px solid #080806;
   border-radius: 30px;
   padding: 25px;
   margin: 25px 0;
 }
+
 .help-page-limits-box h4 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #B8860B;
   margin: 0 0 8px 0;
 }
+
 .help-page-limits-box p {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #8B7500;
   margin: 0;
   line-height: 1.5;
 }
-.help-page-faq-list{
+
+.help-page-faq-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
+
 .help-page-faq-item {
   background: #F1F3F3;
   border-radius: 15px;
   overflow: hidden;
   border: 1px solid #E2E8F0;
 }
+
 .help-page-faq-question {
-  background: #9B9EA3;
-  font-weight: 600; 
+  background: #7a7d83;
+  font-weight: 600;
   width: 100%;
   padding: 20px;
   text-align: left;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #1C1C1C;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -971,73 +1067,88 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-.help-page-faq-icon{
-  font-size: 1.9rem;
-  color: #000000;
+
+/*.help-page-faq-question:hover {
+  background: #9B9EA3;
+}*/
+.help-page-faq-icon {
+  font-size: 1.5rem;
+  color: #141212;
   font-weight: 300;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
-.help-page-faq-answer{
+
+.help-page-faq-answer {
   padding: 25px 20px 35px 20px;
   color: #1C1C1C;
-  font-weight: 200;
-  font-size: 1rem;
+  font-weight: 300;
+  font-size: 0.9rem;
   line-height: 1.6;
   background: #FAFAFA;
   display: none;
   margin-top: 3px;
 }
+
 .help-page-faq-answer.show {
   display: block;
 }
-.help-page-problem-list{
+
+.help-page-problem-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin-top: 25px;
 }
-.help-page-problem-item{
+
+.help-page-problem-item {
   background: #62666E;
   border-radius: 26px;
   padding: 30px;
-  margin: 4px ;
+  margin: 4px;
   border-left: 4px solid #05082e;
 }
-.help-page-problem-title{
-  font-size: 1.3rem;
+
+.help-page-problem-title {
+  font-size: 1.1rem;
   font-weight: 600;
   color: #0B1425;
   margin: 0 0 10px 0;
 }
+
 .help-page-problem-solution {
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.8);
-  font-weight: 200; 
+  font-weight: 200;
   margin: 0;
   line-height: 1.5;
 }
-.help-page-tips-list{
+
+.help-page-tips-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
   margin-top: 25px;
 }
-.help-page-tip-item{
+
+.help-page-tip-item {
   background: #62666E;
   border-radius: 26px;
   padding: 30px;
-  margin: 4px ;
+  margin: 4px;
   border-left: 4px solid #1d1e27;
 }
-.help-page-tip-title{
-  font-size: 1.3rem;
+
+.help-page-tip-title {
+  font-size: 1.1rem;
   font-weight: 600;
   color: #0B1425;
   margin: 0 0 10px 0;
 }
-.help-page-tip-desc{
-  font-size: 1rem;
+
+.help-page-tip-desc {
+  font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.8);
-  font-weight: 200; 
+  font-weight: 200;
   margin: 0;
   line-height: 1.5;
 }

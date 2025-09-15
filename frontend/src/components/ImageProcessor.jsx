@@ -88,36 +88,43 @@ const ImageProcessor = ({ onNavigate }) => {
             <div className="processor-options-section">
               <h3 className="processor-options-title">Opciones de Procesamiento</h3>
               
-              <div className="processor-option-card">
-                <div className="processor-option-header">
-                  <h4 className="processor-option-title">Eliminar Fondo</h4>
-                  <div 
-                    className={`processor-toggle ${backgroundRemoval ? 'processor-toggle-active' : ''}`}
-                    onClick={() => setBackgroundRemoval(!backgroundRemoval)}
-                  >
-                    <div className="processor-toggle-slider"></div>
+             <div className={`processor-option-card ${backgroundRemoval ? 'active' : ''}`}>
+                <div className="processor-option-content">
+                  <div className="processor-option-text">
+                    <h4 className="processor-option-title">Eliminar Fondo</h4>
+                    <p className="processor-option-description">
+                      Remueve automáticamente el fondo
+                    </p>
+                  </div>
+                  <div className="processor-option-toggle">
+                    <div 
+                      className={`processor-toggle ${backgroundRemoval ? 'processor-toggle-active' : ''}`}
+                      onClick={() => setBackgroundRemoval(!backgroundRemoval)}
+                    >
+                      <div className="processor-toggle-slider"></div>
+                    </div>
                   </div>
                 </div>
-                <p className="processor-option-description">
-                  Remueve automáticamente el fondo
-                </p>
               </div>
 
-              <div className="processor-option-card">
-                <div className="processor-option-header">
-                  <h4 className="processor-option-title">Redimensionar</h4>
-                  <div 
-                    className={`processor-toggle ${resize ? 'processor-toggle-active' : ''}`}
-                    onClick={() => setResize(!resize)}
-                  >
-                    <div className="processor-toggle-slider"></div>
+              <div className={`processor-option-card ${resize ? 'active' : ''}`}>
+                <div className="processor-option-content">
+                  <div className="processor-option-text">
+                    <h4 className="processor-option-title">Redimensionar</h4>
+                    <p className="processor-option-description">
+                      Ajusta las dimensiones de la imagen
+                    </p>
+                  </div>
+                  <div className="processor-option-toggle">
+                    <div 
+                      className={`processor-toggle ${resize ? 'processor-toggle-active' : ''}`}
+                      onClick={() => setResize(!resize)}
+                    >
+                      <div className="processor-toggle-slider"></div>
+                    </div>
                   </div>
                 </div>
-                <p className="processor-option-description">
-                  Ajusta las dimensiones de la imagen
-                </p>
               </div>
-
               {/* Dimensiones personalizadas */}
               {resize && (
                 <div className="processor-dimensions-card">
@@ -165,14 +172,13 @@ const ImageProcessor = ({ onNavigate }) => {
                 </div>
                 <h3 className="processor-results-title">Imagenes Procesadas</h3>
               </div>
-              <div className="processor-results-content">
+              <div className="processor-results-content"></div>
                 <div className="processor-download-section">
                   <button className="processor-download-btn">
                     Descarga
                   </button>
                 </div>
               </div>
-            </div>
           )}
         </div>
       </main>
