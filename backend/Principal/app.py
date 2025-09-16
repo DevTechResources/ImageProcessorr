@@ -106,10 +106,15 @@ class ImageProcessor:
             print(f"Error optimizado peso: {str(e)}")
             return False
     
+    def process_single_image(self, input_path, output_path):
+        
+        return 
     
 
 if __name__ == '__main__':
      print(" Iniciando servidor Image Processor")
-     
+     print(" Servidor disponible en: ")
+     print(" " )
+
     
     
