@@ -200,13 +200,11 @@ def download_images(session_id):
         )
         
     except Exception as e:
-        return jsonify({'error': f'Error descargando: {str(e)}'}), 500
+        return jsonify({'error': f'Error descargando: {str(e)}'}), 404
 
 @app.route('/api/download-zip', methods=['Post'])
 def home():
-    return ""
-       
-    return "Hello, Flask!"
+    return""
 @app.route('/api/processor-zip', methods=['Post'])
 def home():
     return ""
