@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import logoImage from './image/TechResources.png';
 
 const ImageProcessor = ({ onNavigate }) => {
-  const [backgroundRemoval, setBackgroundRemoval] = useState(true);
+  const [backgroundRemoval, setBackgroundRemoval] = useState(false);
   const [resize, setResize] = useState(false);
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
