@@ -63,9 +63,6 @@ const LandingPage = ({ onNavigate }) => {
               <h3 className="preview-title">Procesamiento rápido y sencillo</h3>
               <div className="preview-content">
                 <div className="preview-placeholder">
-                  {/*<svg className="preview-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>*/}
                   <svg xmlns="http://www.w3.org/2000/svg" width="213" height="107" fill="none" viewBox="0 0 213 107">
                       <g filter="url(#a)">
                         <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".6" stroke-width="2" d="M146.75 89.167c2.674 0 5.239-.94 7.13-2.612 1.891-1.672 2.953-3.94 2.953-6.305V35.667c0-2.365-1.062-4.633-2.953-6.305-1.891-1.673-4.456-2.612-7.13-2.612h-39.829a11.16 11.16 0 0 1-4.839-1.046c-1.488-.701-2.754-1.721-3.682-2.966l-4.083-5.35c-.918-1.233-2.168-2.245-3.638-2.946a11.146 11.146 0 0 0-4.782-1.067H66.083c-2.674 0-5.239.94-7.13 2.612-1.89 1.672-2.953 3.94-2.953 6.305V80.25c0 2.365 1.062 4.633 2.953 6.305 1.891 1.672 4.456 2.612 7.13 2.612h80.667Z" shape-rendering="crispEdges"/>
