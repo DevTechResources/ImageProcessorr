@@ -1,11 +1,10 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useProportionalResize } from '../hooks/useProportionalResize';
 import logoImage from './image/TechResources.png';
 
 const ImageProcessor = ({ onNavigate }) => {
   const [backgroundRemoval, setBackgroundRemoval] = useState(false);
   const [resize, setResize] = useState(false);
-  const [customWidth, setCustomWidth] = useState('');
-  const [customHeight, setCustomHeight] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [processedResults, setProcessedResults] = useState([]);
   const [sessionId, setSessionId] = useState(null);
@@ -13,15 +12,37 @@ const ImageProcessor = ({ onNavigate }) => {
   const [processing, setProcessing] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [switchProcessing, setSwitchProcessing] = useState(false); // Para controlar el loading de switches
-
+  const [switchProcessing, setSwitchProcessing] = useState(false);
   const fileInputRef = useRef(null);
   const API_BASE_URL = 'http://localhost:5000/api';
 
-  // Auto-procesar cuando se activan switches con archivos ya cargados
+  const {
+    width,
+    height,
+    originalDimensions,
+    isLoadingDimensions,
+    handleWidthChange,
+    handleHeightChange,
+    handleWidthChangeOnly,
+    handleHeightChangeOnly,
+    loadImageDimensions,
+    resetDimensions,
+    applyPreset,
+    clearDimensions,
+    hasValidDimensions,
+    makeSquare
+  } = useProportionalResize();
+
+  const [editingMode, setEditingMode] = useState('proportional'); 
+
   useEffect(() => {
-    if (uploadedFiles.length > 0 && sessionId && (backgroundRemoval || resize) && !loading && !processing && !switchProcessing) {
+    if (sessionId && uploadedFiles.length > 0) {
+      loadImageDimensions(sessionId);
+    }
+  }, [sessionId, uploadedFiles.length, loadImageDimensions]);
+
+  useEffect(() => {
+    if (uploadedFiles.length > 0 && sessionId && !loading && !processing && !switchProcessing) {
       setSwitchProcessing(true);
       const timer = setTimeout(() => {
         handleProcess().finally(() => {
@@ -31,15 +52,8 @@ const ImageProcessor = ({ onNavigate }) => {
       
       return () => clearTimeout(timer);
     }
-    
-    // Limpiar resultados cuando se desactivan todos los switches
-    if (!backgroundRemoval && !resize) {
-      setProcessedResults([]);
-      setSuccess('');
-    }
-  }, [backgroundRemoval, resize]);
+  }, [backgroundRemoval, resize, uploadedFiles.length]);
 
-  // Manejar drag events
   const handleDrag = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -50,7 +64,6 @@ const ImageProcessor = ({ onNavigate }) => {
     }
   }, []);
 
-  // Manejar drop
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -61,17 +74,14 @@ const ImageProcessor = ({ onNavigate }) => {
     }
   }, []);
 
-  // Manejar input de archivos
   const handleFileInput = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(Array.from(e.target.files));
     }
   };
 
-  // Procesar archivos cargados
   const handleFiles = async (files) => {
     setError('');
-    setSuccess('');
     setLoading(true);
 
     try {
@@ -95,11 +105,9 @@ const ImageProcessor = ({ onNavigate }) => {
       setUploadedFiles(prev => [...prev, ...data.files]);
       setSessionId(data.session_id);
       
-      if (backgroundRemoval || resize) {
-        setTimeout(() => {
-          handleProcessWithSession(data.session_id);
-        }, 500);
-      }
+      setTimeout(() => {
+        handleProcessWithSession(data.session_id);
+      }, 500);
       
       if (data.errors && data.errors.length > 0) {
         setError(`Advertencias: ${data.errors.join(', ')}`);
@@ -118,12 +126,6 @@ const ImageProcessor = ({ onNavigate }) => {
       setError('No hay archivos para procesar');
       return;
     }
-
-    if (!backgroundRemoval && !resize) {
-      setError('Debe activar al menos una opción de procesamiento');
-      return;
-    }
-
     return await handleProcessWithSession(sessionId);
   };
 
@@ -141,8 +143,8 @@ const ImageProcessor = ({ onNavigate }) => {
           session_id: currentSessionId,
           background_removal: backgroundRemoval,
           resize: resize,
-          width: customWidth ? parseInt(customWidth) : null,
-          height: customHeight ? parseInt(customHeight) : null,
+          width: width ? parseInt(width) : null,
+          height: height ? parseInt(height) : null,
         }),
       });
 
@@ -153,7 +155,6 @@ const ImageProcessor = ({ onNavigate }) => {
 
       const data = await response.json();
       setProcessedResults(data.results);
-      setSuccess(`${data.stats.successful} de ${data.stats.total} imágenes procesadas exitosamente`);
       
     } catch (err) {
       setError(err.message);
@@ -170,10 +171,7 @@ const ImageProcessor = ({ onNavigate }) => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/download/${sessionId}`, {
-        method: 'GET',
-      });
-
+      const response = await fetch(`${API_BASE_URL}/download/${sessionId}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Error descargando archivos');
@@ -194,12 +192,9 @@ const ImageProcessor = ({ onNavigate }) => {
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-      
-      setSuccess('Descarga completada');
 
     } catch (err) {
       setError(err.message);
-      console.error('Error downloading files:', err);
     }
   };
 
@@ -212,14 +207,14 @@ const ImageProcessor = ({ onNavigate }) => {
     setProcessedResults([]);
     setSessionId(null);
     setError('');
-    setSuccess('');
     setSwitchProcessing(false);
+    clearDimensions(); 
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  }
+  };
 
-  const shouldShowResults = (backgroundRemoval || resize) && processedResults.length > 0;
+  const shouldShowResults = processedResults.length > 0;
 
   const handleBackgroundRemovalToggle = () => {
     if (!processing && !switchProcessing) {
@@ -414,50 +409,100 @@ const ImageProcessor = ({ onNavigate }) => {
                 </div>
               </div>
 
-              {/* Dimensiones personalizadas - Solo aparece cuando resize está ON */}
-              {resize && (
-                <div className="processor-dimensions-card">
-                  <h4 className="processor-dimensions-title">Dimensiones personalizadas</h4>
-                  <div className="processor-dimensions-inputs">
-                    <div className="processor-input-group">
-                      <label className="processor-input-label">Ancho (px):</label>
+          {/* Dimensiones personalizadas - Solo aparece cuando resize está ON */}
+          {resize && (
+                <div className="dimensions-panel">
+                  <h4 className="dimensions-title">Nuevas Dimensiones</h4>
+                  
+                  {/* Info de imagen original */}
+                  {hasValidDimensions && (
+                    <div className="original-info">
+                      <span className="info-label">Original:</span>
+                      <span className="info-value">
+                        {originalDimensions.width} × {originalDimensions.height} px
+                      </span>
+                    </div>
+                  )}
+
+                  {isLoadingDimensions && (
+                    <div className="loading-info">
+                      Analizando imagen...
+                    </div>
+                  )}
+
+                  {/* Modo de edición */}
+                  <div className="editing-mode">
+                    <div className="mode-tabs">
+                      <button 
+                        className={`mode-tab ${editingMode === 'proportional' ? 'active' : ''}`}
+                        onClick={() => setEditingMode('proportional')}
+                      >
+                        Proporcional
+                      </button>
+                      <button 
+                        className={`mode-tab ${editingMode === 'free' ? 'active' : ''}`}
+                        onClick={() => setEditingMode('free')}
+                      >
+                       Libre
+                      </button>
+                    </div>
+                    <p className="mode-description">
+                      {editingMode === 'proportional' 
+                        ? 'Escribe un valor y el otro se auto-completa' 
+                        : 'Edita ambos campos independientemente'
+                      }
+                    </p>
+                  </div>
+
+                  {/* Inputs de dimensiones */}
+                  <div className="dimensions-inputs">
+                    <div className="input-field">
+                      <label>Ancho (px)</label>
                       <input
                         type="number"
-                        className="processor-dimension-input"
-                        value={customWidth}
-                        onChange={(e) => setCustomWidth(e.target.value)}
-                        placeholder="000"
-                        disabled={processing || switchProcessing}
+                        value={width}
+                        onChange={(e) => 
+                          editingMode === 'proportional' 
+                            ? handleWidthChange(e.target.value)
+                            : handleWidthChangeOnly(e.target.value)
+                        }
+                        placeholder="Ej: 400"
+                        disabled={processing || switchProcessing || isLoadingDimensions}
+                        className="dimension-input"
                       />
                     </div>
-                    <div className="processor-input-group">
-                      <label className="processor-input-label">Altura (px):</label>
+                    
+                    <div className="input-field">
+                      <label>Alto (px)</label>
                       <input
                         type="number"
-                        className="processor-dimension-input"
-                        value={customHeight}
-                        onChange={(e) => setCustomHeight(e.target.value)}
-                        placeholder="000"
-                        disabled={processing || switchProcessing}
+                        value={height}
+                        onChange={(e) => 
+                          editingMode === 'proportional' 
+                            ? handleHeightChange(e.target.value)
+                            : handleHeightChangeOnly(e.target.value)
+                        }
+                        placeholder="Ej: 300"
+                        disabled={processing || switchProcessing || isLoadingDimensions}
+                        className="dimension-input"
                       />
                     </div>
                   </div>
-                  
-                  {/* Botón de procesamiento manual para resize */}
+
+                  {/* Botón procesar manual */}
                   {uploadedFiles.length > 0 && !switchProcessing && (
                     <button 
-                      className="processor-process-btn"
+                      className="process-btn"
                       onClick={handleProcess}
                       disabled={processing || loading}
-                      style={{ marginTop: '15px' }}
                     >
                       {processing ? 'Procesando...' : 'Procesar Imágenes'}
                     </button>
                   )}
                 </div>
               )}
+              </div>
             </div>
-          </div>
 
           {/* Sección de Resultados - Solo aparece cuando hay switches activos y resultados */}
           {shouldShowResults && (
@@ -501,7 +546,7 @@ const ImageProcessor = ({ onNavigate }) => {
                           </div>
                         ) : (
                           <div className="result-icon">
-                            {result.success ? '✅' : '❌'}
+                            {result.success ? '' : ''}
                           </div>
                         )}
                         
