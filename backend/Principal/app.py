@@ -568,19 +568,15 @@ def download_processed(session_id):
         print(f"Descarga individual: {result['processed_name']}")
         
         try:
-            
             file_size = os.path.getsize(file_path)
             if file_size == 0:
                 cleanup_session()
                 return jsonify({'error': 'Archivo procesado está vacío'}), 500
             
-            
             with open(file_path, 'rb') as f:
                 file_data = f.read()
             
-        
             cleanup_session()
-            
             
             from io import BytesIO
             file_buffer = BytesIO(file_data)
@@ -597,13 +593,11 @@ def download_processed(session_id):
             print(f"Error enviando archivo individual: {str(e)}")
             return jsonify({'error': f'Error descargando archivo: {str(e)}'}), 500
     
-    
     zip_filename = f"imagenes_procesadas_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
     
     try:
         print(f"Creando ZIP en memoria: {zip_filename}")
         
-    
         from io import BytesIO
         zip_buffer = BytesIO()
         
@@ -611,7 +605,7 @@ def download_processed(session_id):
             for result in successful_files:
                 file_path = result.get('path')
                 if file_path and os.path.exists(file_path):
-                    
+                    # Verificar que el archivo no está vacío
                     if os.path.getsize(file_path) > 0:
                         zipf.write(file_path, result['processed_name'])
                         print(f"Agregado al ZIP: {result['processed_name']}")

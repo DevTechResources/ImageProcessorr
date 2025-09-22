@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useProportionalResize } from '../hooks/useProportionalResize';
+import { useProcessingStates } from '../hooks/ejemplo';
 import logoImage from './image/TechResources.png';
 
 const ImageProcessor = ({ onNavigate }) => {
@@ -17,23 +18,28 @@ const ImageProcessor = ({ onNavigate }) => {
   const API_BASE_URL = 'http://localhost:5000/api';
 
   const {
-    width,
+     width,
     height,
     originalDimensions,
     isLoadingDimensions,
+    isLocked,
+    fileCount,
     handleWidthChange,
     handleHeightChange,
-    handleWidthChangeOnly,
-    handleHeightChangeOnly,
+    toggleLock,
+    updateFileCount,
     loadImageDimensions,
     resetDimensions,
-    applyPreset,
     clearDimensions,
     hasValidDimensions,
-    makeSquare
-  } = useProportionalResize();
+    shouldAutoComplete,
+    editingMode,
+    canToggleLock
+  } = useProportionalResize(); 
 
-  const [editingMode, setEditingMode] = useState('proportional'); 
+  useEffect (() => {
+    updateFileCount(uploadedFiles, length);
+  }, [uploadedFiles.length, updateFileCount]);
 
   useEffect(() => {
     if (sessionId && uploadedFiles.length > 0) {
@@ -44,13 +50,13 @@ const ImageProcessor = ({ onNavigate }) => {
   useEffect(() => {
     if (uploadedFiles.length > 0 && sessionId && !loading && !processing && !switchProcessing) {
       setSwitchProcessing(true);
-      const timer = setTimeout(() => {
-        handleProcess().finally(() => {
-          setSwitchProcessing(false);
-        });
-      }, 300);
-      
-      return () => clearTimeout(timer);
+        const timer = setTimeout(() => {
+          handleProcess().finally(() => {
+            setSwitchProcessing(false);
+          });
+        }, 300);
+        
+        return () => clearTimeout(timer);
     }
   }, [backgroundRemoval, resize, uploadedFiles.length]);
 
@@ -69,7 +75,7 @@ const ImageProcessor = ({ onNavigate }) => {
     e.stopPropagation();
     setDragActive(false);
     
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFiles(Array.from(e.dataTransfer.files));
     }
   }, []);
@@ -101,7 +107,6 @@ const ImageProcessor = ({ onNavigate }) => {
       }
 
       const data = await response.json();
-      
       setUploadedFiles(prev => [...prev, ...data.files]);
       setSessionId(data.session_id);
       
@@ -164,6 +169,18 @@ const ImageProcessor = ({ onNavigate }) => {
     }
   };
 
+  const handleManualProcess = useCallback(async () => {
+      if (!uploadedFiles.length || processing) return;
+      
+      if (resize && (!width || !height)) {
+        setError('Por favor ingresa las dimensiones antes de procesar');
+        return;
+      }
+  
+      setShowManualProcess(false);
+      await handleProcess();
+    }, [uploadedFiles, resize, width, height, processing]);
+
   const handleDownload = async () => {
     if (!sessionId) {
       setError('No hay archivos para descargar');
@@ -203,12 +220,13 @@ const ImageProcessor = ({ onNavigate }) => {
   };
 
   const clearFiles = () => {
-    setUploadedFiles([]);
+   setUploadedFiles([]);
     setProcessedResults([]);
     setSessionId(null);
     setError('');
     setSwitchProcessing(false);
-    clearDimensions(); 
+    setShowManualProcess(false);
+    clearDimensions();
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -443,7 +461,7 @@ const ImageProcessor = ({ onNavigate }) => {
                         className={`mode-tab ${editingMode === 'free' ? 'active' : ''}`}
                         onClick={() => setEditingMode('free')}
                       >
-                       Libre
+                        Libre
                       </button>
                     </div>
                     <p className="mode-description">
