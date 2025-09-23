@@ -23,7 +23,7 @@ app = Flask(__name__)
 CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
-MAX_CONTENT_LENGTH = 500 * 1024 * 1024  # 500MB
+MAX_CONTENT_LENGTH = 500 * 1024 * 1024  
 
 ALLOWED_EXTENSIONS = {
     'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 
@@ -557,6 +557,7 @@ def download_processed(session_id):
         except Exception as e:
             print(f"Error limpiando sesión {session_id}: {str(e)}")
     
+    # Una sola imagen
     if len(successful_files) == 1:
         result = successful_files[0]
         file_path = result.get('path')
@@ -577,16 +578,19 @@ def download_processed(session_id):
                 file_data = f.read()
             
             cleanup_session()
-            
-            from io import BytesIO
-            file_buffer = BytesIO(file_data)
-            
-            return send_file(
-                file_buffer,
-                as_attachment=True,
-                download_name=result['processed_name'],
-                mimetype='image/png'
+            from flask import Response
+            response = Response(
+                file_data,
+                mimetype='image/png',
+                headers={
+                    'Content-Disposition': f'attachment; filename="{result["processed_name"]}"',
+                    'Content-Type': 'image/png',
+                    'Content-Length': str(len(file_data))
+                }
             )
+            
+            print(f"Enviando imagen individual: {result['processed_name']} ({len(file_data)} bytes)")
+            return response
             
         except Exception as e:
             cleanup_session()
@@ -596,7 +600,7 @@ def download_processed(session_id):
     zip_filename = f"imagenes_procesadas_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
     
     try:
-        print(f"Creando ZIP en memoria: {zip_filename}")
+        print(f"Creando ZIP: {zip_filename}")
         
         from io import BytesIO
         zip_buffer = BytesIO()
@@ -605,7 +609,6 @@ def download_processed(session_id):
             for result in successful_files:
                 file_path = result.get('path')
                 if file_path and os.path.exists(file_path):
-                    # Verificar que el archivo no está vacío
                     if os.path.getsize(file_path) > 0:
                         zipf.write(file_path, result['processed_name'])
                         print(f"Agregado al ZIP: {result['processed_name']}")
@@ -613,7 +616,8 @@ def download_processed(session_id):
                         print(f"Saltando archivo vacío: {result['processed_name']}")
         
         zip_buffer.seek(0)
-        zip_size = len(zip_buffer.getvalue())
+        zip_data = zip_buffer.getvalue()
+        zip_size = len(zip_data)
         
         if zip_size == 0:
             cleanup_session()
@@ -622,13 +626,20 @@ def download_processed(session_id):
         print(f"ZIP creado exitosamente: {zip_size//1024}KB")
         
         cleanup_session()
-        
-        return send_file(
-            zip_buffer,
-            as_attachment=True,
-            download_name=zip_filename,
-            mimetype='application/zip'
+  
+        from flask import Response
+        response = Response(
+            zip_data,
+            mimetype='application/zip',
+            headers={
+                'Content-Disposition': f'attachment; filename="{zip_filename}"',
+                'Content-Type': 'application/zip',
+                'Content-Length': str(zip_size)
+            }
         )
+        
+        print(f"Enviando ZIP: {zip_filename}")
+        return response
     
     except Exception as e:
         cleanup_session()
