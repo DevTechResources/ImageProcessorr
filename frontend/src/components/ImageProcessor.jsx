@@ -51,7 +51,6 @@ const ImageProcessor = ({ onNavigate }) => {
     PROCESSING_STATES
   } = useProcessingStates();
 
-  // Actualizar el contador de archivos cuando cambien los uploadedFiles
   useEffect(() => {
     updateFileCount(uploadedFiles.length);
   }, [uploadedFiles.length, updateFileCount]);
@@ -126,7 +125,6 @@ const ImageProcessor = ({ onNavigate }) => {
       setUploadedFiles(prev => [...prev, ...data.files]);
       setSessionId(data.session_id);
       
-      // Iniciar simulación de procesamiento inmediatamente
       await processFiles(data.files, {
         background_removal: backgroundRemoval,
         resize: resize,
@@ -516,7 +514,7 @@ const ImageProcessor = ({ onNavigate }) => {
                       )}
                     </div>
                   </div>
-                  
+                  {/*
                   {hasValidDimensions && fileCount === 1 && (
                     <div className="original-info">
                       <span className="info-label">Original:</span>
@@ -524,7 +522,7 @@ const ImageProcessor = ({ onNavigate }) => {
                         {originalDimensions.width} × {originalDimensions.height} px
                       </span>
                     </div>
-                  )}
+                  )}*/}
 
                   {isLoadingDimensions && (
                     <div className="loading-info">
@@ -633,8 +631,8 @@ const ImageProcessor = ({ onNavigate }) => {
               <div className="processor-results-header">
                 <div className="processor-results-header-left">
                   <div className="processor-results-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="84" height="70" fill="none" viewBox="0 0 84 70">
-                    <path fill="#fff" d="M54.25 11.667 75.075 14l-17.15 14.292-3.675-16.625Zm-24.5 46.666L8.925 56l17.15-14.292 3.675 16.625ZM14 24.792l2.8-17.355L33.95 21.73 14 24.792Z"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="70"  fill="none" viewBox="0 0 84 70">
+                    <path fill="#6383a1ff" d="M54.25 11.667 75.075 14l-17.15 14.292-3.675-16.625Zm-24.5 46.666L8.925 56l17.15-14.292 3.675 16.625ZM14 24.792l2.8-17.355L33.95 21.73 14 24.792Z"/>
                     <path fill="#fff" d="m16.275 30.917-7.35 1.166C8.75 33.104 8.75 33.98 8.75 35c0 6.708 2.8 13.125 8.05 18.083l5.25-3.791c-4.025-3.938-6.3-9.042-6.3-14.292 0-1.313.175-2.77.525-4.083ZM42 7.292c-9.45 0-17.85 3.354-23.975 8.604l4.9 4.083c4.9-4.229 11.55-6.854 19.075-6.854 1.575 0 3.325.146 4.9.438l1.225-5.688C46.2 7.438 44.1 7.292 42 7.292Zm25.725 31.791 7.35-1.166c.175-1.021.175-1.896.175-2.917 0-6.417-2.625-12.688-7.525-17.646L62.3 21c3.85 3.938 5.95 8.896 5.95 13.854 0 1.459-.175 2.917-.525 4.23Zm-6.65 10.938c-4.9 4.229-11.55 6.854-19.075 6.854a27.82 27.82 0 0 1-4.9-.438l-1.225 5.688c2.1.292 4.2.438 6.125.438 9.45 0 17.85-3.355 23.975-8.605l-4.9-3.937Z"/>
                     <path fill="#fff" d="m70 45.208-2.8 17.355L50.05 48.27 70 45.208Z"/>
                   </svg>
