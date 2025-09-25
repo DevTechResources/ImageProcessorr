@@ -100,7 +100,7 @@ const ImageProcessor = ({ onNavigate }) => {
     }
   };
 
-  const handleFiles = async (files) => {
+ const handleFiles = async (files) => {
     setError('');
     setLoading(true);
 
@@ -122,10 +122,19 @@ const ImageProcessor = ({ onNavigate }) => {
 
       const data = await response.json();
       
-      setUploadedFiles(prev => [...prev, ...data.files]);
-      setSessionId(data.session_id);
+      const newFiles = data.files;
+      setUploadedFiles(prev => {
+        const combinedFiles = [...prev, ...newFiles];
+        console.log(`Archivos combinados: ${prev.length} anteriores + ${newFiles.length} nuevos = ${combinedFiles.length} total`);
+        return combinedFiles;
+      });
       
-      await processFiles(data.files, {
+      const currentSessionId = sessionId || data.session_id;
+      if (!sessionId) {
+        setSessionId(data.session_id);
+      }
+      
+      await processFiles(newFiles, {
         background_removal: backgroundRemoval,
         resize: resize,
         width: width ? parseInt(width) : null,
@@ -133,7 +142,7 @@ const ImageProcessor = ({ onNavigate }) => {
       });
       
       setTimeout(() => {
-        handleProcessWithSession(data.session_id);
+        handleProcessWithSession(currentSessionId);
       }, 500);
       
       if (data.errors && data.errors.length > 0) {
@@ -368,6 +377,16 @@ const ImageProcessor = ({ onNavigate }) => {
             </p>
           </div>
 
+          {/* Boton de procesar*/}
+          <div className="process-btns">
+            <button 
+              className= "process-btn manual"
+              disabled={processing || loading || !width || !height || isProcessing}
+                >
+                  {processing || isProcessing ? 'Procesando...' : 'Procesar Imágenes'}
+            </button>
+
+          </div>
           
           {/* Cuadrícula de Contenido */}
          <div className="processor-content-grid">
@@ -416,7 +435,7 @@ const ImageProcessor = ({ onNavigate }) => {
                     onClick={openFileSelector}
                     disabled={loading || isProcessing}
                   >
-                    {uploadedFiles.length > 0 ? 'Agregar Más' : 'Seleccionar Archivos'}
+                    Seleccionar Archivos 
                   </button>
                   
                   {uploadedFiles.length > 0 && (
@@ -508,13 +527,13 @@ const ImageProcessor = ({ onNavigate }) => {
                     
                     <div className="file-status">
                       {fileCount === 1 ? (
-                        <span className="file-count single">🖼️ 1 imagen</span>
+                        <span className="file-count single"> 1 imagen</span>
                       ) : (
-                        <span className="file-count multiple">🖼️ {fileCount} imágenes</span>
+                        <span className="file-count multiple">{fileCount} imágenes</span>
                       )}
                     </div>
                   </div>
-                  {/*
+                  
                   {hasValidDimensions && fileCount === 1 && (
                     <div className="original-info">
                       <span className="info-label">Original:</span>
@@ -522,7 +541,7 @@ const ImageProcessor = ({ onNavigate }) => {
                         {originalDimensions.width} × {originalDimensions.height} px
                       </span>
                     </div>
-                  )}*/}
+                  )}
 
                   {isLoadingDimensions && (
                     <div className="loading-info">
@@ -611,13 +630,6 @@ const ImageProcessor = ({ onNavigate }) => {
                           </span>
                         </div>
                       )}
-                      <button 
-                        className="process-btn manual"
-                        onClick={handleProcess}
-                        disabled={processing || loading || !width || !height || isProcessing}
-                      >
-                        {processing || isProcessing ? 'Procesando...' : 'Procesar Imágenes'}
-                      </button>
                     </div>
                   )}
                 </div>

@@ -4,6 +4,8 @@ import ImageProcessor from './components/ImageProcessor';
 import HelpPage from './components/HelpPage';
 import ContactPage from './components/ContactPage';
 import './App.css';
+import './App2.css';
+import './App3.css';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('home');

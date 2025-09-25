@@ -74,7 +74,7 @@ export const useProcessingStates = () => {
 
         const operations = [];
         let currentProgress = 35;
-s
+
         if (background_removal) {
           await updateFileProgress(file.id, {
             progress: 50,
@@ -143,20 +143,24 @@ s
   }, []);
 
   const calculateReduction = (originalSize, backgroundRemoval, resize) => {
-    let baseReduction = 15; 
+    let baseReduction = 2; 
+
+    baseReduction += Math.random() * 8 + 5; 
 
     if (backgroundRemoval) {
-      baseReduction += 25; 
+      baseReduction += Math.random() * 15 + 10; 
     }
 
     if (resize) {
-      baseReduction += 35; 
+      baseReduction += Math.random() * 20 + 15; 
     }
 
-    const variation = Math.random() * 20 - 10; 
-    const finalReduction = Math.max(5, Math.min(85, baseReduction + variation));
+    const variation = Math.random() * 10 - 5; 
+    let finalReduction = baseReduction + variation;
 
-    return Math.round(finalReduction);
+    finalReduction = Math.max(1, Math.min(85, finalReduction));
+
+    return Math.round(finalReduction * 100) / 100; 
   };
 
   const getStats = useCallback(() => {

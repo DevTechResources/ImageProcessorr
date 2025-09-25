@@ -31,7 +31,6 @@ ALLOWED_EXTENSIONS = {
     'psd', 'eps', 'ai', 'zip'
 }
 
-
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def cleanup_old_sessions():
