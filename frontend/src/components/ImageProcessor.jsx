@@ -18,315 +18,304 @@ const ImageProcessor = ({ onNavigate }) => {
   const API_BASE_URL = 'http://localhost:5000/api';
 
  const {
-    width,
-    height,
-    originalDimensions,
-    isLoadingDimensions,
-    isLocked,
-    fileCount,
-    handleWidthChange,
-    handleHeightChange,
-    toggleLock,
-    updateFileCount,
-    loadImageDimensions,
-    makeSquare,
-    resetDimensions,
-    applyPreset,
-    clearDimensions,
-    hasValidDimensions,
-    shouldAutoComplete,
-    canToggleLock,
-    editingMode
-  } = useProportionalResize();
-
-  const {
-    processingFiles,
-    isProcessing,
-    processFiles,
-    clearProcessing,
-    setProcessingFiles,
-    setIsProcessing,
-    getStats,
-    getStateMessage,
-    PROCESSING_STATES
-  } = useProcessingStates();
-
-  useEffect(() => {
-    updateFileCount(uploadedFiles.length);
-  }, [uploadedFiles.length, updateFileCount]);
-
-  useEffect(() => {
-    if (sessionId && uploadedFiles.length > 0) {
-      loadImageDimensions(sessionId, uploadedFiles.length);
-    }
-  }, [sessionId, uploadedFiles.length, loadImageDimensions]);
-
-  useEffect(() => {
-    if (uploadedFiles.length > 0 && sessionId && !loading && !processing && !switchProcessing) {
-      setSwitchProcessing(true);
-      const timer = setTimeout(() => {
-        handleProcess().finally(() => {
-          setSwitchProcessing(false);
-        });
-      }, 300);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [backgroundRemoval, resize, uploadedFiles.length]);
-
-  const handleDrag = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFiles(Array.from(e.dataTransfer.files));
-    }
-  }, []);
-
-  const handleFileInput = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleFiles(Array.from(e.target.files));
-    }
-  };
-
- const handleFiles = async (files) => {
-    setError('');
-    setLoading(true);
-
-    try {
-      const formData = new FormData();
-      files.forEach((file) => {
-        formData.append('files', file);
-      });
-
-      const response = await fetch(`${API_BASE_URL}/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error subiendo archivos');
-      }
-
-      const data = await response.json();
-      
-      const newFiles = data.files;
-      setUploadedFiles(prev => {
-        const combinedFiles = [...prev, ...newFiles];
-        console.log(`Archivos combinados: ${prev.length} anteriores + ${newFiles.length} nuevos = ${combinedFiles.length} total`);
-        return combinedFiles;
-      });
-      
-      const currentSessionId = sessionId || data.session_id;
-      if (!sessionId) {
-        setSessionId(data.session_id);
-      }
-      
-      await processFiles(newFiles, {
-        background_removal: backgroundRemoval,
-        resize: resize,
-        width: width ? parseInt(width) : null,
-        height: height ? parseInt(height) : null,
-      });
-      
-      setTimeout(() => {
-        handleProcessWithSession(currentSessionId);
-      }, 500);
-      
-      if (data.errors && data.errors.length > 0) {
-        setError(`Advertencias: ${data.errors.join(', ')}`);
-      }
-
-    } catch (err) {
-      setError(err.message);
-      console.error('Error uploading files:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleProcess = async () => {
-    if (!sessionId || uploadedFiles.length === 0) {
-      setError('No hay archivos para procesar');
-      return;
-    }
-    
-    await processFiles(uploadedFiles, {
-      background_removal: backgroundRemoval,
-      resize: resize,
-      width: width ? parseInt(width) : null,
-      height: height ? parseInt(height) : null,
-    });
-    
-    return await handleProcessWithSession(sessionId);
-  };
-
-  const handleProcessWithSession = async (currentSessionId) => {
-    setError('');
-    setProcessing(true);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/process`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          session_id: currentSessionId,
-          background_removal: backgroundRemoval,
-          resize: resize,
-          width: width ? parseInt(width) : null,
-          height: height ? parseInt(height) : null,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error procesando imágenes');
-      }
-
-      const data = await response.json();
-      
-      setProcessingFiles(prev => 
-        prev.map(file => {
-          const result = data.results.find(r => r.id === file.id);
-          if (result && result.success) {
-            return {
-              ...file,
-              state: PROCESSING_STATES.COMPLETED,
-              progress: 100,
-              currentSize: result.final_size || file.originalSize,
-              reductionPercentage: result.size_reduction || 0,
-              operations: result.operations || [],
-              preview: result.preview_url || file.preview
-            };
-          } else if (result && !result.success) {
-            return {
-              ...file,
-              state: PROCESSING_STATES.ERROR,
-              error: result.message
-            };
-          }
-          return file;
-        })
-      );
-      
-      setProcessedResults(data.results);
-      
-    } catch (err) {
-      setError(err.message);
-      console.error('Error processing images:', err);
-      
-      setProcessingFiles(prev => 
-        prev.map(file => ({
-          ...file,
-          state: PROCESSING_STATES.ERROR,
-          error: err.message
-        }))
-      );
-      
-    } finally {
-      setProcessing(false);
-      setIsProcessing(false);
-    }
-  };
-
-  const handleDownload = async () => {
-    if (!sessionId) {
-      setError('No hay archivos para descargar');
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/download/${sessionId}`);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error descargando archivos');
-      }
-
-      const contentType = response.headers.get('content-type');
-      const contentDisposition = response.headers.get('content-disposition');
-  
-      let filename = 'archivo_procesado';
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-        if (match && match[1]) {
-          filename = match[1].replace(/['"]/g, '');
-        }
-      } else {
-        const successfulCount = processedResults.filter(r => r.success).length;
-        if (successfulCount === 1) {
-          const singleResult = processedResults.find(r => r.success);
-          filename = singleResult?.processed_name || 'imagen_procesada.png';
-        } else {
-          filename = `imagenes_procesadas_${Date.now()}.zip`;
-        }
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      
-      document.body.appendChild(a);
-      a.click();
-      
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-
-      console.log(`Descarga completada: ${filename} (${contentType})`);
-
-    } catch (err) {
-      setError(err.message);
-      console.error('Error en descarga:', err);
-    }
-  };
-
-  const openFileSelector = () => {
-    fileInputRef.current?.click();
-  };
-
-  const clearFiles = () => {
-    setUploadedFiles([]);
-    setProcessedResults([]);
-    setSessionId(null);
-    setError('');
-    setSwitchProcessing(false);
-    clearDimensions();
-    clearProcessing();
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const shouldShowResults = processedResults.length > 0 || processingFiles.length > 0;
-  const stats = getStats();
-
-  const handleBackgroundRemovalToggle = () => {
-    if (!processing && !switchProcessing) {
-      setBackgroundRemoval(!backgroundRemoval);
-    }
-  };
-
-  const handleResizeToggle = () => {
-    if (!processing && !switchProcessing) {
-      setResize(!resize);
-    }
-  };
+     width,
+     height,
+     originalDimensions,
+     isLoadingDimensions,
+     isLocked,
+     fileCount,
+     handleWidthChange,
+     handleHeightChange,
+     toggleLock,
+     updateFileCount,
+     loadImageDimensions,
+     makeSquare,
+     resetDimensions,
+     applyPreset,
+     clearDimensions,
+     hasValidDimensions,
+     shouldAutoComplete,
+     canToggleLock,
+     editingMode
+   } = useProportionalResize();
+ 
+   const {
+     processingFiles,
+     isProcessing,
+     processFiles,
+     clearProcessing,
+     setProcessingFiles,
+     setIsProcessing,
+     getStats,
+     getStateMessage,
+     PROCESSING_STATES
+   } = useProcessingStates();
+ 
+   useEffect(() => {
+     updateFileCount(uploadedFiles.length);
+   }, [uploadedFiles.length, updateFileCount]);
+ 
+   useEffect(() => {
+     if (sessionId && uploadedFiles.length > 0) {
+       loadImageDimensions(sessionId, uploadedFiles.length);
+     }
+   }, [sessionId, uploadedFiles.length, loadImageDimensions]);
+ 
+   const handleDrag = useCallback((e) => {
+     e.preventDefault();
+     e.stopPropagation();
+     if (e.type === "dragenter" || e.type === "dragover") {
+       setDragActive(true);
+     } else if (e.type === "dragleave") {
+       setDragActive(false);
+     }
+   }, []);
+ 
+   const handleDrop = useCallback((e) => {
+     e.preventDefault();
+     e.stopPropagation();
+     setDragActive(false);
+     
+     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+       handleFiles(Array.from(e.dataTransfer.files));
+     }
+   }, []);
+ 
+   const handleFileInput = (e) => {
+     if (e.target.files && e.target.files.length > 0) {
+       handleFiles(Array.from(e.target.files));
+     }
+   };
+ 
+   const handleFiles = async (files) => {
+     setError('');
+     setLoading(true);
+ 
+     try {
+       const formData = new FormData();
+       files.forEach((file) => {
+         formData.append('files', file);
+       });
+ 
+       const response = await fetch(`${API_BASE_URL}/upload`, {
+         method: 'POST',
+         body: formData,
+       });
+ 
+       if (!response.ok) {
+         const errorData = await response.json();
+         throw new Error(errorData.error || 'Error subiendo archivos');
+       }
+ 
+       const data = await response.json();
+       
+       const newFiles = data.files;
+       setUploadedFiles(prev => {
+         const combinedFiles = [...prev, ...newFiles];
+         console.log(`Archivos combinados: ${prev.length} anteriores + ${newFiles.length} nuevos = ${combinedFiles.length} total`);
+         return combinedFiles;
+       });
+       
+       const currentSessionId = sessionId || data.session_id;
+       if (!sessionId) {
+         setSessionId(data.session_id);
+       }
+       
+       if (data.errors && data.errors.length > 0) {
+         setError(`Advertencias: ${data.errors.join(', ')}`);
+       }
+ 
+     } catch (err) {
+       setError(err.message);
+       console.error('Error uploading files:', err);
+     } finally {
+       setLoading(false);
+     }
+   };
+ 
+   const handleProcess = async () => {
+     if (!sessionId || uploadedFiles.length === 0) {
+       setError('No hay archivos para procesar');
+       return;
+     }
+     
+     setError('');
+     setSwitchProcessing(true);
+     
+     try {
+       
+       await processFiles(uploadedFiles, {
+         background_removal: backgroundRemoval,
+         resize: resize,
+         width: width ? parseInt(width) : null,
+         height: height ? parseInt(height) : null,
+       });
+       
+       
+       const result = await handleProcessWithSession(sessionId);
+       return result;
+     } catch (err) {
+       setError(err.message);
+       console.error('Error en procesamiento manual:', err);
+     } finally {
+       setSwitchProcessing(false);
+     }
+   };
+ 
+   const handleProcessWithSession = async (currentSessionId) => {
+     setProcessing(true);
+ 
+     try {
+       const response = await fetch(`${API_BASE_URL}/process`, {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+           session_id: currentSessionId,
+           background_removal: backgroundRemoval,
+           resize: resize,
+           width: width ? parseInt(width) : null,
+           height: height ? parseInt(height) : null,
+         }),
+       });
+ 
+       if (!response.ok) {
+         const errorData = await response.json();
+         throw new Error(errorData.error || 'Error procesando imágenes');
+       }
+ 
+       const data = await response.json();
+       
+       setProcessingFiles(prev => 
+         prev.map(file => {
+           const result = data.results.find(r => r.id === file.id);
+           if (result && result.success) {
+             return {
+               ...file,
+               state: PROCESSING_STATES.COMPLETED,
+               progress: 100,
+               currentSize: result.final_size || file.originalSize,
+               reductionPercentage: result.size_reduction || 0,
+               operations: result.operations || [],
+               preview: result.preview_url || file.preview
+             };
+           } else if (result && !result.success) {
+             return {
+               ...file,
+               state: PROCESSING_STATES.ERROR,
+               error: result.message
+             };
+           }
+           return file;
+         })
+       );
+       
+       setProcessedResults(data.results);
+       
+     } catch (err) {
+       setError(err.message);
+       console.error('Error processing images:', err);
+       
+       setProcessingFiles(prev => 
+         prev.map(file => ({
+           ...file,
+           state: PROCESSING_STATES.ERROR,
+           error: err.message
+         }))
+       );
+       
+     } finally {
+       setProcessing(false);
+       setIsProcessing(false);
+     }
+   };
+ 
+   const handleDownload = async () => {
+     if (!sessionId) {
+       setError('No hay archivos para descargar');
+       return;
+     }
+ 
+     try {
+       const response = await fetch(`${API_BASE_URL}/download/${sessionId}`);
+       
+       if (!response.ok) {
+         const errorData = await response.json();
+         throw new Error(errorData.error || 'Error descargando archivos');
+       }
+ 
+       const contentType = response.headers.get('content-type');
+       const contentDisposition = response.headers.get('content-disposition');
+   
+       let filename = 'archivo_procesado';
+       if (contentDisposition) {
+         const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+         if (match && match[1]) {
+           filename = match[1].replace(/['"]/g, '');
+         }
+       } else {
+         const successfulCount = processedResults.filter(r => r.success).length;
+         if (successfulCount === 1) {
+           const singleResult = processedResults.find(r => r.success);
+           filename = singleResult?.processed_name || 'imagen_procesada.png';
+         } else {
+           filename = `imagenes_procesadas_${Date.now()}.zip`;
+         }
+       }
+ 
+       const blob = await response.blob();
+       const url = window.URL.createObjectURL(blob);
+       const a = document.createElement('a');
+       a.href = url;
+       a.download = filename;
+       
+       document.body.appendChild(a);
+       a.click();
+       
+       document.body.removeChild(a);
+       window.URL.revokeObjectURL(url);
+ 
+       console.log(`Descarga completada: ${filename} (${contentType})`);
+ 
+     } catch (err) {
+       setError(err.message);
+       console.error('Error en descarga:', err);
+     }
+   };
+ 
+   const openFileSelector = () => {
+     fileInputRef.current?.click();
+   };
+ 
+   const clearFiles = () => {
+     setUploadedFiles([]);
+     setProcessedResults([]);
+     setSessionId(null);
+     setError('');
+     setSwitchProcessing(false);
+     clearDimensions();
+     clearProcessing();
+     if (fileInputRef.current) {
+       fileInputRef.current.value = '';
+     }
+   };
+ 
+   const shouldShowResults = processedResults.length > 0 || processingFiles.length > 0;
+   const stats = getStats();
+ 
+   const handleBackgroundRemovalToggle = () => {
+     if (!processing && !switchProcessing) {
+       setBackgroundRemoval(!backgroundRemoval);
+     }
+   };
+ 
+   const handleResizeToggle = () => {
+     if (!processing && !switchProcessing) {
+       setResize(!resize);
+     }
+   };
+ 
   return (
     <div className="min-h-screen app-background">
       {/* Header */}
@@ -377,19 +366,8 @@ const ImageProcessor = ({ onNavigate }) => {
             </p>
           </div>
 
-          {/* Boton de procesar*/}
-          <div className="process-btns">
-            <button 
-              className= "process-btn manual"
-              disabled={processing || loading || !width || !height || isProcessing}
-                >
-                  {processing || isProcessing ? 'Procesando...' : 'Procesar Imágenes'}
-            </button>
-
-          </div>
           
-          {/* Cuadrícula de Contenido */}
-         <div className="processor-content-grid">
+          <div className="processor-content-grid">
           
             <div className="processor-upload-section">
               <div 
@@ -465,8 +443,22 @@ const ImageProcessor = ({ onNavigate }) => {
                   style={{ display: 'none' }}
                 />
               </div>
+
+              {/* Botón de procesar manual - NUEVO POSICIONAMIENTO */}
+              {uploadedFiles.length > 0 && (
+                <div className="process-btns">
+                  <button 
+                    className="process-btn manual"
+                    onClick={handleProcess}
+                    disabled={processing || loading || isProcessing || switchProcessing}
+                  >
+                    {processing || isProcessing || switchProcessing ? 'Procesando...' : 'Procesar Imágenes'}
+                  </button>
+                </div>
+              )}
             </div>
 
+            
             {/* Sección de opciones */}
             <div className="processor-options-section">
               <h3 className="processor-options-title">Opciones de Procesamiento</h3>
@@ -527,9 +519,15 @@ const ImageProcessor = ({ onNavigate }) => {
                     
                     <div className="file-status">
                       {fileCount === 1 ? (
-                        <span className="file-count single"> 1 imagen</span>
+                        <span className="file-count single"> 
+                        <span className="file-count-number">1</span>
+                        <span className="file-conut-text">imagen</span>
+                        </span>
                       ) : (
-                        <span className="file-count multiple">{fileCount} imágenes</span>
+                        <span className="file-count multiple">
+                        <span className="file-count-number">{fileCount}</span>
+                        <span className="file-count-text">imágenes</span>
+                        </span>
                       )}
                     </div>
                   </div>
