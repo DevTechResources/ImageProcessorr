@@ -33,65 +33,32 @@ ALLOWED_EXTENSIONS = {
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ============================================================================
-# SISTEMA DE LIMPIEZA 
-# ============================================================================
-
-def schedule_session_cleanup(session_folder, delay=3):
-    """
-    Programa limpieza de sesión después de un delay.
-    Ideal para limpiar después de descarga.
-    """
-    def cleanup():
-        time.sleep(delay)
-        try:
-            if os.path.exists(session_folder):
-                shutil.rmtree(session_folder)
-                print(f"✓ Sesión limpiada automáticamente: {os.path.basename(session_folder)}")
-        except Exception as e:
-            print(f"✗ Error limpiando sesión: {str(e)}")
-    
-    threading.Thread(target=cleanup, daemon=True).start()
-
 def cleanup_old_sessions():
-    """
-    Limpieza de respaldo para sesiones abandonadas (más de 2 horas).
-    Se ejecuta periódicamente como backup.
-    """
+    """Limpiar sesiones más viejas de 1 hora"""
     while True:
         try:
             current_time = datetime.now()
-            cleaned = 0
             for session_dir in os.listdir(UPLOAD_FOLDER):
                 session_path = os.path.join(UPLOAD_FOLDER, session_dir)
                 if os.path.isdir(session_path):
                     dir_time = datetime.fromtimestamp(os.path.getctime(session_path))
-                    if current_time - dir_time > timedelta(hours=2):
+                    if current_time - dir_time > timedelta(hours=1):
                         shutil.rmtree(session_path)
-                        cleaned += 1
-            
-            if cleaned > 0:
-                print(f"🧹 Limpieza de respaldo: {cleaned} sesiones antiguas eliminadas")
-                
+                        print(f"Sesión expirada limpiada: {session_dir}")
         except Exception as e:
-            print(f"Error en limpieza de respaldo: {str(e)}")
-        
-        time.sleep(3600)
+            print(f"Error en cleanup automático: {str(e)}")
+        time.sleep(1800)
 
 cleanup_thread = threading.Thread(target=cleanup_old_sessions, daemon=True)
 cleanup_thread.start()
-
-# ============================================================================
-# FUNCIONES AUXILIARES
-# ============================================================================
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def is_image_file(filename):
     image_extensions = {
-        'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg',
-        'tiff', 'tif', 'raw', 'heic', 'heif',
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 
+        'tiff', 'tif', 'raw', 'heic', 'heif'
     }
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in image_extensions
 
@@ -111,6 +78,7 @@ def extract_images_from_zip(zip_path, extract_to):
                         
                         old_path = os.path.join(extract_to, file_info.filename)
                         new_path = os.path.join(extract_to, unique_name)
+                        
                         
                         if os.path.dirname(file_info.filename):
                             os.makedirs(os.path.dirname(new_path), exist_ok=True)
@@ -135,6 +103,7 @@ def extract_images_from_zip(zip_path, extract_to):
 def optimize_with_oxipng(image_path):
     """Optimizar PNG usando oxipng"""
     try:
+        
         result = subprocess.run(['oxipng', '-o', '6', '--strip', 'safe', image_path], 
                               capture_output=True, text=True, timeout=30)
         
@@ -146,140 +115,51 @@ def optimize_with_oxipng(image_path):
     except Exception as e:
         return False, f"Error ejecutando oxipng: {str(e)}"
 
-def force_size_reduction_safe(image_path, original_dimensions, target_reduction_percent=10):
-    """Reducir peso SIN cambiar dimensiones - GARANTIZADO"""
-    try:
-        original_size = os.path.getsize(image_path)
-        target_size = original_size * (1 - target_reduction_percent / 100)
-        
-        with Image.open(image_path) as img:
-            current_dimensions = img.size
-            
-            if current_dimensions != original_dimensions:
-                print(f"CORRIGIENDO dimensiones: {current_dimensions} -> {original_dimensions}")
-                img = img.resize(original_dimensions, Image.Resampling.LANCZOS)
-            
-            has_transparency = False
-            if img.mode in ('RGBA', 'LA'):
-                if img.mode == 'RGBA':
-                    try:
-                        alpha = img.getchannel('A')
-                        alpha_min, alpha_max = alpha.getextrema()
-                        has_transparency = alpha_min < 255
-                    except:
-                        has_transparency = True
-                else:
-                    has_transparency = True
-            
-            if has_transparency:
-                img.save(image_path, 'PNG', optimize=True, compress_level=9, pnginfo=None)
-            else:
-                if img.mode != 'RGB':
-                    img = img.convert('RGB')
-                
-                base_path = os.path.splitext(image_path)[0]
-                jpg_path = base_path + '.jpg'
-                
-                for quality in [85, 80, 75, 70]:
-                    img.save(jpg_path, 'JPEG', quality=quality, optimize=True)
-                    current_size = os.path.getsize(jpg_path)
-                    if current_size < target_size:
-                        break
-                
-                if os.path.exists(image_path):
-                    os.remove(image_path)
-                os.rename(jpg_path, image_path)
-            
-            with Image.open(image_path) as final_check:
-                final_dimensions = final_check.size
-                if final_dimensions != original_dimensions:
-                    print(f"EMERGENCIA: Dimensiones incorrectas después de reducción!")
-                    corrected = final_check.resize(original_dimensions, Image.Resampling.LANCZOS)
-                    if final_check.mode in ('RGBA', 'LA'):
-                        corrected.save(image_path, 'PNG', optimize=True)
-                    else:
-                        corrected.save(image_path, 'JPEG', quality=80, optimize=True)
-            
-            return True, "Peso reducido manteniendo dimensiones"
-            
-    except Exception as e:
-        return False, f"Error en reducción segura: {str(e)}"
-
 def remove_background(image_path, output_path):
-    """Eliminar fondo manteniendo dimensiones originales EXACTAS"""
-    original_dimensions = None
-    try:
-        with Image.open(image_path) as img:
-            original_dimensions = img.size
-            print(f"REMOVE_BG: Dimensiones ORIGINALES: {original_dimensions}")
-    except Exception as e:
-        return False, f"Error obteniendo dimensiones originales: {str(e)}"
-    
+    """Eliminar fondo usando rembg con transparencia real"""
     if not REMBG_AVAILABLE:
         try:
             with Image.open(image_path) as img:
-                if img.size != original_dimensions:
-                    img = img.resize(original_dimensions, Image.Resampling.LANCZOS)
-                
                 if img.mode != 'RGBA':
                     img = img.convert('RGBA')
-                
-                img.save(output_path, 'PNG', optimize=True, compress_level=9)
-                
-                with Image.open(output_path) as check:
-                    if check.size != original_dimensions:
-                        corrected = check.resize(original_dimensions, Image.Resampling.LANCZOS)
-                        corrected.save(output_path, 'PNG', optimize=True)
-                
-                return True, "Fondo eliminado"
+                img.save(output_path, 'PNG', optimize=True)
+                return True, "Convertido a PNG (REMBG no disponible)"
         except Exception as e:
             return False, f"Error en conversión: {str(e)}"
     
     try:
         with open(image_path, 'rb') as input_file:
             input_data = input_file.read()
-        
+    
         output_data = remove(input_data)
         
         with open(output_path, 'wb') as output_file:
             output_file.write(output_data)
         
-        with Image.open(output_path) as img:
-            current_dimensions = img.size
-            print(f"REMOVE_BG: Después de rembg: {current_dimensions}")
-            
-            if current_dimensions != original_dimensions:
-                print(f"CORRIGIENDO: {current_dimensions} -> {original_dimensions}")
-                img = img.resize(original_dimensions, Image.Resampling.LANCZOS)
-            
-            if img.mode != 'RGBA':
-                img = img.convert('RGBA')
-            
-            img.save(output_path, 'PNG', optimize=True, compress_level=9, pnginfo=None)
+        try:
+            with Image.open(output_path) as img:
+                if img.mode != 'RGBA':
+                    img = img.convert('RGBA')
+                    img.save(output_path, 'PNG', optimize=True)
+        except:
+            pass
         
-        with Image.open(output_path) as final_check:
-            final_dimensions = final_check.size
-            print(f"REMOVE_BG: Dimensiones FINALES: {final_dimensions}")
-            
-            if final_dimensions != original_dimensions:
-                print(f"ÚLTIMA CORRECCIÓN: {final_dimensions} -> {original_dimensions}")
-                corrected = final_check.resize(original_dimensions, Image.Resampling.LANCZOS)
-                corrected.save(output_path, 'PNG', optimize=True)
+        oxipng_success, oxipng_msg = optimize_with_oxipng(output_path)
         
-        force_size_reduction_safe(output_path, original_dimensions, 15)
-        optimize_with_oxipng(output_path)
+        message = "Fondo eliminado con transparencia"
+        if oxipng_success:
+            message += " y optimizado"
         
-        return True, "Fondo eliminado"
+        return True, message
     
     except Exception as e:
         return False, f"Error eliminando fondo: {str(e)}"
 
 def resize_image(image_path, output_path, width=None, height=None):
-    """Redimensionar imagen SOLO cuando las dimensiones son diferentes"""
+    """Redimensionar imagen preservando transparencia"""
     try:
         with Image.open(image_path) as img:
-            original_dimensions = img.size
-            print(f"RESIZE: Dimensiones originales: {original_dimensions}")
+            original_size = img.size
             
             if img.mode in ('RGBA', 'LA'):
                 pass  
@@ -288,62 +168,25 @@ def resize_image(image_path, output_path, width=None, height=None):
             else:
                 img = img.convert('RGBA')
             
+            
             if width and height:
-                target_width = int(width)
-                target_height = int(height)
-                
-                if target_width != original_dimensions[0] or target_height != original_dimensions[1]:
-                    img_resized = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
-                    message = f"Redimensionado de {original_dimensions[0]}x{original_dimensions[1]} a {target_width}x{target_height}"
-                    print(f"RESIZE: {original_dimensions} -> {target_width}x{target_height}")
-                    
-                    img_resized.save(output_path, 'PNG', optimize=True, compress_level=9, pnginfo=None)
-                    
-                    with Image.open(output_path) as check:
-                        final_dims = check.size
-                        if final_dims != (target_width, target_height):
-                            print(f"CORRIGIENDO dimensiones finales: {final_dims} -> {target_width}x{target_height}")
-                            corrected = check.resize((target_width, target_height), Image.Resampling.LANCZOS)
-                            corrected.save(output_path, 'PNG', optimize=True)
-                else:
-                    img.save(output_path, 'PNG', optimize=True, compress_level=9, pnginfo=None)
-                    message = None
-                    print(f"RESIZE: Sin cambios, manteniendo {original_dimensions}")
+                img_resized = img.resize((int(width), int(height)), Image.Resampling.LANCZOS)
+                message = f"Redimensionado de {original_size[0]}x{original_size[1]} a {width}x{height}"
             else:
-                img.save(output_path, 'PNG', optimize=True, compress_level=9, pnginfo=None)
-                message = None
-                print(f"RESIZE: Sin dimensiones, manteniendo {original_dimensions}")
+                img_resized = img
+                message = f"Convertido a PNG (tamaño: {original_size[0]}x{original_size[1]})"
+            
+            img_resized.save(output_path, 'PNG', optimize=True, compress_level=6)
+            
+        
+            oxipng_success, oxipng_msg = optimize_with_oxipng(output_path)
+            if oxipng_success:
+                message += " y optimizado"
             
             return True, message
             
     except Exception as e:
         return False, f"Error redimensionando: {str(e)}"
-
-def optimize_png_only(image_path, output_path):
-    """Optimizar PNG manteniendo dimensiones originales"""
-    try:
-        with Image.open(image_path) as img:
-            original_dimensions = img.size
-            print(f"OPTIMIZE: Manteniendo dimensiones: {original_dimensions}")
-            
-            if img.mode != 'RGBA':
-                img = img.convert('RGBA')
-            
-            img.save(output_path, 'PNG', optimize=True, compress_level=9, pnginfo=None)
-            
-            with Image.open(output_path) as check:
-                if check.size != original_dimensions:
-                    corrected = check.resize(original_dimensions, Image.Resampling.LANCZOS)
-                    corrected.save(output_path, 'PNG', optimize=True)
-            
-            force_size_reduction_safe(output_path, original_dimensions, 8)
-            optimize_with_oxipng(output_path)
-            
-            message = f"PNG optimizado ({original_dimensions[0]}x{original_dimensions[1]})"
-            return True, message
-            
-    except Exception as e:
-        return False, f"Error optimizando PNG: {str(e)}"
 
 def create_image_preview_data(image_path):
     """Crear datos de preview de la imagen en base64"""
@@ -371,6 +214,7 @@ def process_single_image(image_info, session_folder, options):
     input_path = image_info['path']
     original_size = os.path.getsize(input_path)
     
+    
     base_name = os.path.splitext(image_info['original_name'])[0]
     output_filename = f"{base_name}_processed.png"
     temp_path = os.path.join(session_folder, f"temp_{uuid.uuid4()}.png")
@@ -393,6 +237,7 @@ def process_single_image(image_info, session_folder, options):
     temp_files = []
     
     try:
+    
         has_background_removal = options.get('background_removal', False)
         has_resize = options.get('resize', False)
         png_only = options.get('png_optimize_only', False)
@@ -400,14 +245,16 @@ def process_single_image(image_info, session_folder, options):
         print(f"Procesando {image_info['original_name']}: bg_removal={has_background_removal}, resize={has_resize}, png_only={png_only}")
         
         if png_only and not has_background_removal and not has_resize:
-            success, message = optimize_png_only(current_path, final_path)
+            success, message = resize_image(current_path, final_path)
             if success:
-                result['operations'].append(message)
+                result['operations'].append("Convertido a PNG optimizado")
             else:
                 result['message'] = message
                 return result
         
+    
         else:
+            
             if has_background_removal:
                 success, message = remove_background(current_path, temp_path)
                 result['operations'].append(message)
@@ -422,22 +269,20 @@ def process_single_image(image_info, session_folder, options):
                 width = options.get('width')
                 height = options.get('height')
                 success, message = resize_image(current_path, final_path, width, height)
-                if message:
-                    result['operations'].append(message)
-                if not success:
-                    result['message'] = message
-                    return result
+                result['operations'].append(message)
             else:
                 if current_path != input_path:
+    
                     shutil.move(current_path, final_path)
-                    result['operations'].append("Convertido a PNG optimizado")
+                    result['operations'].append("Guardado como PNG optimizado")
                 else:
-                    success, message = optimize_png_only(current_path, final_path)
+                    success, message = resize_image(current_path, final_path)
                     result['operations'].append(message)
         
         if os.path.exists(final_path):
             final_size = os.path.getsize(final_path)
             size_reduction = ((original_size - final_size) / original_size) * 100
+            
             preview_url = create_image_preview_data(final_path)
             
             result['success'] = True
@@ -446,14 +291,11 @@ def process_single_image(image_info, session_folder, options):
             result['size_reduction'] = max(0, size_reduction)
             result['path'] = final_path
             result['preview_url'] = preview_url
-            
-            print(f"✓ {image_info['original_name']}: {original_size//1024}KB -> {final_size//1024}KB (-{size_reduction:.1f}%)")
         else:
             result['message'] = 'Error: archivo final no encontrado'
     
     except Exception as e:
         result['message'] = f'Error procesando: {str(e)}'
-        print(f"✗ Error en {image_info['original_name']}: {str(e)}")
     
     finally:
         for temp_file in temp_files:
@@ -464,10 +306,6 @@ def process_single_image(image_info, session_folder, options):
                     pass
     
     return result
-
-# ============================================================================
-# ENDPOINTS
-# ============================================================================
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -556,6 +394,7 @@ def upload_files():
                 errors.append(f"Archivo no permitido: {file.filename if file.filename else 'sin nombre'}")
     
     except Exception as e:
+        
         if os.path.exists(session_folder):
             shutil.rmtree(session_folder)
         return jsonify({'error': f'Error procesando archivos: {str(e)}'}), 500
@@ -585,7 +424,7 @@ def upload_files():
     with open(metadata_path, 'w', encoding='utf-8') as f:
         json.dump(session_metadata, f, indent=2, ensure_ascii=False)
     
-    print(f"Cargados {len(uploaded_files)} archivos en sesión {session_id}")
+    print(f"Cargados {len(uploaded_files)} archivos (Directos: {direct_count}, ZIP: {zip_count})")
     
     return jsonify({
         'success': True,
@@ -618,26 +457,20 @@ def process_images():
     
     background_removal = data.get('background_removal', False)
     resize = data.get('resize', False)
-    width = data.get('width')
-    height = data.get('height')
-    
-    actual_resize = resize and width and height and int(width) > 0 and int(height) > 0
     
     options = {
         'background_removal': background_removal,
-        'resize': actual_resize,
-        'width': int(width) if width and str(width).strip() != '' else None,
-        'height': int(height) if height and str(height).strip() != '' else None,
+        'resize': resize,
+        'width': data.get('width'),
+        'height': data.get('height'),
         'png_optimize_only': False
     }
     
-    if not background_removal and not actual_resize:
+    if not background_removal and not resize:
         options['png_optimize_only'] = True
-        print(f"Modo: Solo optimización para {len(metadata['files'])} imágenes")
+        print(f"Modo: Solo conversión PNG optimizada para {len(metadata['files'])} imágenes")
     else:
-        print(f"Procesando {len(metadata['files'])} imágenes: bg_removal={background_removal}, resize={actual_resize}")
-        if actual_resize:
-            print(f"Dimensiones objetivo: {options['width']}x{options['height']}")
+        print(f"Procesando {len(metadata['files'])} imágenes con opciones: bg_removal={background_removal}, resize={resize}")
     
     processed_results = []
     
@@ -651,6 +484,7 @@ def process_images():
             })
             continue
         
+        print(f"Procesando: {file_info['original_name']}")
         result = process_single_image(file_info, session_folder, options)
         processed_results.append(result)
         
@@ -673,7 +507,8 @@ def process_images():
     successful = sum(1 for r in processed_results if r['success'])
     failed = len(processed_results) - successful
     
-    print(f"Completado: {successful} exitosos, {failed} fallidos")
+    mode_message = "PNG optimizado" if options['png_optimize_only'] else "procesamiento completo"
+    print(f"Completado ({mode_message}): {successful} exitosos, {failed} fallidos")
     
     return jsonify({
         'success': True,
@@ -689,9 +524,7 @@ def process_images():
 
 @app.route('/api/download/<session_id>', methods=['GET'])
 def download_processed(session_id):
-    """
-    Descargar imágenes procesadas y limpiar sesión automáticamente después.
-    """
+    """Descargar imágenes procesadas y limpiar archivos temporales"""
     session_folder = os.path.join(UPLOAD_FOLDER, session_id)
     metadata_path = os.path.join(session_folder, 'metadata.json')
     
@@ -710,59 +543,64 @@ def download_processed(session_id):
     successful_files = [r for r in metadata.get('results', []) if r.get('success', False)]
     
     if not successful_files:
-        
-        schedule_session_cleanup(session_folder, delay=1)
-        return jsonify({'error': 'No hay archivos procesados'}), 400
- 
+        return jsonify({'error': 'No hay archivos procesados para descargar'}), 400
+    
+    print(f"Descarga solicitada: {len(successful_files)} archivos")
+    
+    def cleanup_session():
+        """Limpiar archivos de la sesión"""
+        try:
+            if os.path.exists(session_folder):
+                shutil.rmtree(session_folder)
+                print(f"Sesión limpiada: {session_id}")
+        except Exception as e:
+            print(f"Error limpiando sesión {session_id}: {str(e)}")
+    
+    # Una sola imagen
     if len(successful_files) == 1:
         result = successful_files[0]
         file_path = result.get('path')
         
         if not file_path or not os.path.exists(file_path):
-            schedule_session_cleanup(session_folder, delay=1)
+            cleanup_session()
             return jsonify({'error': 'Archivo procesado no encontrado'}), 404
+        
+        print(f"Descarga individual: {result['processed_name']}")
         
         try:
             file_size = os.path.getsize(file_path)
             if file_size == 0:
-                schedule_session_cleanup(session_folder, delay=1)
+                cleanup_session()
                 return jsonify({'error': 'Archivo procesado está vacío'}), 500
             
             with open(file_path, 'rb') as f:
                 file_data = f.read()
             
-            schedule_session_cleanup(session_folder, delay=3)
-            
+            cleanup_session()
             from flask import Response
-            
-            if file_path.endswith('.jpg') or file_path.endswith('.jpeg'):
-                from flask import Response
-            
-            if file_path.endswith('.jpg') or file_path.endswith('.jpeg'):
-                mimetype = 'image/jpeg'
-            else:
-                mimetype = 'image/png'
-            
             response = Response(
                 file_data,
-                mimetype=mimetype,
+                mimetype='image/png',
                 headers={
                     'Content-Disposition': f'attachment; filename="{result["processed_name"]}"',
-                    'Content-Type': mimetype,
+                    'Content-Type': 'image/png',
                     'Content-Length': str(len(file_data))
                 }
             )
             
-            print(f"Descarga individual iniciada: {result['processed_name']} ({file_size//1024}KB)")
+            print(f"Enviando imagen individual: {result['processed_name']} ({len(file_data)} bytes)")
             return response
             
         except Exception as e:
-            schedule_session_cleanup(session_folder, delay=1)
+            cleanup_session()
+            print(f"Error enviando archivo individual: {str(e)}")
             return jsonify({'error': f'Error descargando archivo: {str(e)}'}), 500
     
     zip_filename = f"imagenes_procesadas_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
     
     try:
+        print(f"Creando ZIP: {zip_filename}")
+        
         from io import BytesIO
         zip_buffer = BytesIO()
         
@@ -772,17 +610,22 @@ def download_processed(session_id):
                 if file_path and os.path.exists(file_path):
                     if os.path.getsize(file_path) > 0:
                         zipf.write(file_path, result['processed_name'])
+                        print(f"Agregado al ZIP: {result['processed_name']}")
+                    else:
+                        print(f"Saltando archivo vacío: {result['processed_name']}")
         
         zip_buffer.seek(0)
         zip_data = zip_buffer.getvalue()
         zip_size = len(zip_data)
         
         if zip_size == 0:
-            schedule_session_cleanup(session_folder, delay=1)
+            cleanup_session()
             return jsonify({'error': 'ZIP creado pero está vacío'}), 500
-      
-        schedule_session_cleanup(session_folder, delay=3)
         
+        print(f"ZIP creado exitosamente: {zip_size//1024}KB")
+        
+        cleanup_session()
+  
         from flask import Response
         response = Response(
             zip_data,
@@ -794,15 +637,17 @@ def download_processed(session_id):
             }
         )
         
-        print(f"Descarga ZIP iniciada: {zip_filename} ({zip_size//1024}KB) - {len(successful_files)} imágenes")
+        print(f"Enviando ZIP: {zip_filename}")
         return response
     
     except Exception as e:
-        schedule_session_cleanup(session_folder, delay=1)
+        cleanup_session()
+        print(f"Error creando ZIP: {str(e)}")
         return jsonify({'error': f'Error creando ZIP: {str(e)}'}), 500
 
 @app.route('/api/session/<session_id>', methods=['GET'])
 def get_session_info(session_id):
+    """Obtener información de sesión"""
     session_folder = os.path.join(UPLOAD_FOLDER, session_id)
     metadata_path = os.path.join(session_folder, 'metadata.json')
     
@@ -818,12 +663,15 @@ def get_session_info(session_id):
 
 @app.route('/api/preview/<filename>', methods=['GET'])
 def get_image_preview(filename):
+    """Endpoint para obtener preview de imagen"""
+    
     found_path = None
     
     try:
         for session_dir in os.listdir(UPLOAD_FOLDER):
             session_path = os.path.join(UPLOAD_FOLDER, session_dir)
             if os.path.isdir(session_path):
+               
                 for file in os.listdir(session_path):
                     if file == filename:
                         found_path = os.path.join(session_path, file)
@@ -837,7 +685,9 @@ def get_image_preview(filename):
         return jsonify({'error': 'Archivo no encontrado'}), 404
     
     try:
+    
         with Image.open(found_path) as img:
+            
             thumbnail = img.copy()
             thumbnail.thumbnail((300, 300), Image.Resampling.LANCZOS)
             
@@ -866,6 +716,8 @@ def get_image_preview(filename):
 
 @app.route('/api/dimensions/<session_id>', methods=['GET'])
 def get_image_dimensions(session_id):
+    """Obtener dimensiones de la primera imagen en la sesión"""
+    
     session_folder = os.path.join(UPLOAD_FOLDER, session_id)
     metadata_path = os.path.join(session_folder, 'metadata.json')
     
@@ -900,6 +752,8 @@ def get_image_dimensions(session_id):
                 'filename': first_file.get('original_name', 'unknown')
             }
             
+            print(f"Dimensiones obtenidas: {dimensions['width']}x{dimensions['height']} (ratio: {dimensions['aspect_ratio']:.2f})")
+            
             return jsonify({
                 'success': True,
                 'dimensions': dimensions
@@ -908,69 +762,11 @@ def get_image_dimensions(session_id):
     except Exception as e:
         return jsonify({'error': f'Error obteniendo dimensiones: {str(e)}'}), 500
 
-# ============================================================================
-# ENDPOINT ADICIONAL: Limpieza manual (útil para testing)
-# ============================================================================
-
-@app.route('/api/cleanup/<session_id>', methods=['DELETE'])
-def manual_cleanup(session_id):
-    """
-    Endpoint para limpiar manualmente una sesión específica.
-    Útil para testing o administración.
-    """
-    session_folder = os.path.join(UPLOAD_FOLDER, session_id)
-    
-    if not os.path.exists(session_folder):
-        return jsonify({'error': 'Sesión no encontrada'}), 404
-    
-    try:
-        shutil.rmtree(session_folder)
-        return jsonify({
-            'success': True,
-            'message': f'Sesión {session_id} eliminada correctamente'
-        })
-    except Exception as e:
-        return jsonify({'error': f'Error eliminando sesión: {str(e)}'}), 500
-
-@app.route('/api/cleanup/all', methods=['DELETE'])
-def cleanup_all_sessions():
-    """
-    Endpoint para limpiar TODAS las sesiones.
-    USAR CON CUIDADO - solo para desarrollo/testing.
-    """
-    try:
-        cleaned = 0
-        for session_dir in os.listdir(UPLOAD_FOLDER):
-            session_path = os.path.join(UPLOAD_FOLDER, session_dir)
-            if os.path.isdir(session_path):
-                shutil.rmtree(session_path)
-                cleaned += 1
-        
-        return jsonify({
-            'success': True,
-            'message': f'{cleaned} sesiones eliminadas',
-            'cleaned_count': cleaned
-        })
-    except Exception as e:
-        return jsonify({'error': f'Error en limpieza masiva: {str(e)}'}), 500
-
-# ============================================================================
-# INICIO DEL SERVIDOR
-# ============================================================================
-
 if __name__ == '__main__':
-    print("=" * 70)
-    print(" Iniciando ImageProcessor Backend")
-    print("=" * 70)
-    print(f" Directorio uploads: {os.path.abspath(UPLOAD_FOLDER)}")
-    print(f" Formatos soportados: {', '.join(sorted(ALLOWED_EXTENSIONS))}")
-    print(f" Servidor: http://localhost:5000")
-    print(f" Health check: http://localhost:5000/api/health")
-    print(f" REMBG disponible: {REMBG_AVAILABLE}")
-    print("=" * 70)
-    print("   Sistema de limpieza automática ACTIVADO:")
-    print("   • Limpieza inmediata: 3 segundos después de descarga")
-    print("   • Limpieza de respaldo: Cada 1 hora (sesiones > 2 horas)")
-    print("=" * 70)
+    print("Iniciando ImageProcessor Backend...")
+    print(f"Directorio uploads: {os.path.abspath(UPLOAD_FOLDER)}")
+    print(f"Formatos soportados: {', '.join(sorted(ALLOWED_EXTENSIONS))}")
+    print(f"Servidor: http://localhost:5000")
+    print(f"Health check: http://localhost:5000/api/health")
     
     app.run(debug=True, host='0.0.0.0', port=5000)

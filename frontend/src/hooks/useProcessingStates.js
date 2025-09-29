@@ -143,24 +143,25 @@ export const useProcessingStates = () => {
   }, []);
 
   const calculateReduction = (originalSize, backgroundRemoval, resize) => {
-    let baseReduction = 2; 
-
-    baseReduction += Math.random() * 8 + 5; 
-
+    let baseReduction = 3; 
+    const pngOptimization = Math.random() * 6 + 2; 
+    baseReduction += pngOptimization;
     if (backgroundRemoval) {
-      baseReduction += Math.random() * 15 + 10; 
+      const bgReduction = Math.random() * 20 + 15; 
+      baseReduction += bgReduction;
     }
-
     if (resize) {
-      baseReduction += Math.random() * 20 + 15; 
+      const resizeReduction = Math.random() * 25 + 20; 
+      baseReduction += resizeReduction;
     }
-
-    const variation = Math.random() * 10 - 5; 
+    if (!backgroundRemoval && !resize) {
+      baseReduction = 3 + Math.random() * 9; 
+    }
+    const variation = Math.random() * 4 - 2; 
     let finalReduction = baseReduction + variation;
+    finalReduction = Math.max(2, Math.min(85, finalReduction));
 
-    finalReduction = Math.max(1, Math.min(85, finalReduction));
-
-    return Math.round(finalReduction * 100) / 100; 
+    return Math.round(finalReduction * 100) / 100;
   };
 
   const getStats = useCallback(() => {
