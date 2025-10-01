@@ -169,7 +169,6 @@ const HelpPage = ({ onNavigate }) => {
               <span className="help-page-format-tag">WEBP</span>
               <span className="help-page-format-tag">BMP</span>
               <span className="help-page-format-tag">TIFF</span>
-              <span className="help-page-format-tag">SVG</span>
               <span className="help-page-format-tag">HEIC</span>
               <span className="help-page-format-tag">RAW</span>
               <span className="help-page-format-tag">ZIP</span>

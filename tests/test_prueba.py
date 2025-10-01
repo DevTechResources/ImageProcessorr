@@ -405,6 +405,41 @@ class CompleteFlowTest(unittest.TestCase):
                     self.screenshot("04_error_descarga")
             
             print("   PASO 4/4 COMPLETADO \n")
+            time.sleep(3)
+            
+            # AMBOS SWITCHES ON (600x600)
+            print("\n[PASO 5/6 5 img - AMBOS SWITCHES ON")
+            print("-" * 80)
+            
+            print(" [5.1]  Subir 5 imagenes....")
+            self.upload_images(5)
+            self.screenshot("05_imagen_subida")
+            
+            print(" [5.2] Prender Ambos switches..")
+            self.set_switch('eliminar_fondo', True)
+            self.set_switch('redimencionar', True)
+            self.screenshot("0.5_ambos_switch_on")
+            self.screenshot
+            
+            print(' [5.3] Configurar  600x600...')
+            self.set_dimensions(600, 600)
+            self.screenshot("0.5_dims_600")
+            
+            print(' [5.4] Procesar....')
+            if self.click_process():
+                print("  [5.5] Esperando procesamiento (ambos switches)...")
+                self.wait_processing(35) 
+                self.screenshot("05_procesado")
+                
+                print("  [5.6] DESCARGAR...")
+                if self.click_download():
+                    self.screenshot("05_descargando")
+                    print("     IMAGEN DESCARGADA - FIN DEL TEST")
+                else:
+                    print("      NO SE DESCARGÓ")
+                    self.screenshot("05_error_descarga")
+            
+            print("   PASO 5/6 \n")
             print("\n" + "="*80)
             
             

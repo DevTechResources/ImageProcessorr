@@ -27,8 +27,7 @@ MAX_CONTENT_LENGTH = 500 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = {
     'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 
-    'tiff', 'tif', 'svg', 'raw', 'heic', 'heif',
-    'psd', 'eps', 'ai', 'zip'
+    'tiff', 'tif', 'raw', 'heic', 'psd',  'zip'
 }
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -81,17 +80,14 @@ def cleanup_old_sessions():
 cleanup_thread = threading.Thread(target=cleanup_old_sessions, daemon=True)
 cleanup_thread.start()
 
-# ============================================================================
 # FUNCIONES AUXILIARES
-# ============================================================================
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def is_image_file(filename):
     image_extensions = {
-        'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg',
-        'tiff', 'tif', 'raw', 'heic', 'heif',
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 
+        'tiff', 'tif', 'raw', 'heic', 'psd'
     }
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in image_extensions
 
@@ -465,9 +461,7 @@ def process_single_image(image_info, session_folder, options):
     
     return result
 
-# ============================================================================
 # ENDPOINTS
-# ============================================================================
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -908,9 +902,7 @@ def get_image_dimensions(session_id):
     except Exception as e:
         return jsonify({'error': f'Error obteniendo dimensiones: {str(e)}'}), 500
 
-# ============================================================================
 # ENDPOINT ADICIONAL: Limpieza manual (útil para testing)
-# ============================================================================
 
 @app.route('/api/cleanup/<session_id>', methods=['DELETE'])
 def manual_cleanup(session_id):
@@ -954,9 +946,7 @@ def cleanup_all_sessions():
     except Exception as e:
         return jsonify({'error': f'Error en limpieza masiva: {str(e)}'}), 500
 
-# ============================================================================
 # INICIO DEL SERVIDOR
-# ============================================================================
 
 if __name__ == '__main__':
     print("=" * 70)
@@ -967,10 +957,6 @@ if __name__ == '__main__':
     print(f" Servidor: http://localhost:5000")
     print(f" Health check: http://localhost:5000/api/health")
     print(f" REMBG disponible: {REMBG_AVAILABLE}")
-    print("=" * 70)
-    print("   Sistema de limpieza automática ACTIVADO:")
-    print("   • Limpieza inmediata: 3 segundos después de descarga")
-    print("   • Limpieza de respaldo: Cada 1 hora (sesiones > 2 horas)")
     print("=" * 70)
     
     app.run(debug=True, host='0.0.0.0', port=5000)
