@@ -32,10 +32,7 @@ ALLOWED_EXTENSIONS = {
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ============================================================================
 # SISTEMA DE LIMPIEZA 
-# ============================================================================
-
 def schedule_session_cleanup(session_folder, delay=3):
     """
     Programa limpieza de sesión después de un delay.
