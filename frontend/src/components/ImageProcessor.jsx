@@ -682,9 +682,8 @@ const ImageProcessor = ({ onNavigate }) => {
                             className="processing-image"
                           />
                         ) : (
-                          <div className="processing-placeholder">➀ 🖼️</div>
+                          <div className="processing-placeholder">⟳🖼️</div>
                         )}
-                        {/* <div className="processing-placeholder">➀ Imagen...</div>*/}
                       </div>
                       
                       <div className="processing-info">
@@ -720,10 +719,11 @@ const ImageProcessor = ({ onNavigate }) => {
                             )}
                           </div>
                           
-                          {file.reductionPercentage > 0 && (
+                          {file.reductionPercentage !== 0 && (
                             <div className="reduction-info">
-                              <span className="reduction-badge">
-                                -{file.reductionPercentage.toFixed(0)}%
+                              <span className={'reduction-badge ${file.reductionPercentage < 0 ? 'increase':''}'}>
+                                {file.reductionPercentage > 0 ? '-': '+'}
+                                { Math.abs(file.reductionPercentage).toFixed(0)}%
                               </span>
                             </div>
                           )}

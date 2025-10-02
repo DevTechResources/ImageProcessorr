@@ -365,7 +365,7 @@ def process_single_image(image_info, session_folder, options):
     original_size = os.path.getsize(input_path)
     
     base_name = os.path.splitext(image_info['original_name'])[0]
-    output_filename = f"{base_name}_processed.png"
+    output_filename = f"{base_name}.png"
     temp_path = os.path.join(session_folder, f"temp_{uuid.uuid4()}.png")
     final_path = os.path.join(session_folder, output_filename)
     
