@@ -1,0 +1,41 @@
+{
+  "session_id": "bd598570-24df-402f-b4d7-9b0844b6fd4f",
+  "created_at": "2025-10-03T11:27:08.936977",
+  "files": [
+    {
+      "id": "9ff953fe-9f59-428d-a226-6a4d82c1abb9",
+      "filename": "0a9bddd4-615a-4c6e-8dcc-b2392c53b129_SA40B-E.png",
+      "original_name": "SA40B-E.png",
+      "type": "image",
+      "source": "direct",
+      "size": 38383,
+      "path": "uploads\\bd598570-24df-402f-b4d7-9b0844b6fd4f\\0a9bddd4-615a-4c6e-8dcc-b2392c53b129_SA40B-E.png"
+    },
+    {
+      "id": "2d9a9238-ffff-4e92-94f5-7f2633ecd370",
+      "filename": "24d60bcd-8159-4146-abfa-d7536c41c921_I64_1.png",
+      "original_name": "I64_1.png",
+      "type": "image",
+      "source": "direct",
+      "size": 80588,
+      "path": "uploads\\bd598570-24df-402f-b4d7-9b0844b6fd4f\\24d60bcd-8159-4146-abfa-d7536c41c921_I64_1.png"
+    },
+    {
+      "id": "bb2ca592-6429-4ec8-9a3e-a661be54831e",
+      "filename": "7535243e-4505-446a-96c8-bf91ad313db5_I64_2.png",
+      "original_name": "I64_2.png",
+      "type": "image",
+      "source": "direct",
+      "size": 89863,
+      "path": "uploads\\bd598570-24df-402f-b4d7-9b0844b6fd4f\\7535243e-4505-446a-96c8-bf91ad313db5_I64_2.png"
+    }
+  ],
+  "errors": [],
+  "processed": false,
+  "upload_type": "multiple",
+  "stats": {
+    "direct_files": 3,
+    "zip_files": 0,
+    "total_images": 3
+  }
+}

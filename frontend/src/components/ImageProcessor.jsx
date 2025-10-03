@@ -191,12 +191,19 @@ const ImageProcessor = ({ onNavigate }) => {
          prev.map(file => {
            const result = data.results.find(r => r.id === file.id);
            if (result && result.success) {
+           
+             const sizeChange = result.size_change !== undefined 
+               ? result.size_change 
+               : result.size_reduction 
+                 ? -result.size_reduction 
+                 : 0;
+             
              return {
                ...file,
                state: PROCESSING_STATES.COMPLETED,
                progress: 100,
                currentSize: result.final_size || file.originalSize,
-               reductionPercentage: result.size_reduction || 0,
+               reductionPercentage: -sizeChange, 
                operations: result.operations || [],
                preview: result.preview_url || file.preview
              };
@@ -210,7 +217,7 @@ const ImageProcessor = ({ onNavigate }) => {
            return file;
          })
        );
-       
+         
        setProcessedResults(data.results);
        
      } catch (err) {
@@ -719,13 +726,10 @@ const ImageProcessor = ({ onNavigate }) => {
                             )}
                           </div>
                           
-                         {file.reductionPercentage !== 0 && (
+                          {file.reductionPercentage !== 0 && (
                             <div className="reduction-info">
-                              <span className={`reduction-badge ${file.reductionPercentage > 0 ? 'reduction-positive' : 'reduction-negative'}`}>
-                                {file.reductionPercentage > 0 
-                                  ? `+${Math.min(file.reductionPercentage, 100).toFixed(0)}%`
-                                  : `-${Math.min(Math.abs(file.reductionPercentage), 100).toFixed(0)}%`
-                                }
+                              <span className={`reduction-badge ${file.reductionPercentage < 0 ? 'increase' : ''}`}>
+                                {file.reductionPercentage > 0 ? '+' : '-'}{Math.abs(file.reductionPercentage).toFixed(0)}%
                               </span>
                             </div>
                           )}

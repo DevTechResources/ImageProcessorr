@@ -428,20 +428,11 @@ def process_single_image(image_info, session_folder, options):
                     success, message = optimize_png_only(current_path, final_path)
                     result['operations'].append(message)
         
-        # VERIFICAR que el archivo final existe
         if os.path.exists(final_path):
-            # OBTENER tamaño final (esto faltaba!)
             final_size = os.path.getsize(final_path)
-            
-            # CALCULAR porcentaje de cambio
-            # Si final_size < original_size → reducción (positivo)
-            # Si final_size > original_size → aumento (negativo)
-            # Positivo = aumentó, Negativo = redujo
             size_reduction = ((final_size - original_size) / original_size) * 100
-            
-            # LIMITAR: Si aumentó más del 100%, mostrar solo +100%
-            # Log mejorado
-            if size_reduction < 0:  # Cambiar de > a 
+           
+            if size_reduction < 0: 
                 print(f"✓ {image_info['original_name']}: {original_size//1024}KB -> {final_size//1024}KB ({size_reduction:.1f}%)")
             else:
                 print(f"⚠ {image_info['original_name']}: {original_size//1024}KB -> {final_size//1024}KB (+{size_reduction:.1f}%)")
