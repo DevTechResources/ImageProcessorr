@@ -719,24 +719,25 @@ const ImageProcessor = ({ onNavigate }) => {
                             )}
                           </div>
                           
-                          {file.reductionPercentage !== 0 && (
+                         {file.reductionPercentage !== 0 && (
                             <div className="reduction-info">
-                              <span className={'reduction-badge ${file.reductionPercentage < 0 ? 'increase':''}'}>
-                                {file.reductionPercentage > 0 ? '-': '+'}
-                                { Math.abs(file.reductionPercentage).toFixed(0)}%
+                              <span className={`reduction-badge ${file.reductionPercentage > 0 ? 'reduction-positive' : 'reduction-negative'}`}>
+                                {file.reductionPercentage > 0 
+                                  ? `+${Math.min(file.reductionPercentage, 100).toFixed(0)}%`
+                                  : `-${Math.min(Math.abs(file.reductionPercentage), 100).toFixed(0)}%`
+                                }
                               </span>
                             </div>
                           )}
                         </div>
                         
                         {file.operations && file.operations.length > 0 && (
-                          <div className="processing-operations">
+                          <div className="processing-operations">╰┈➤
                             {file.operations.map((op, i) => (
                               <span key={i} className="operation-tag">{op}</span>
                             ))}
                           </div>
                         )}
-                        
                       </div>
                     </div>
                   ))}
@@ -761,8 +762,8 @@ const ImageProcessor = ({ onNavigate }) => {
                     disabled={stats.completed === 0}
                   >
                     {stats.completed === 1 
-                      ? 'Descargar Imagen' 
-                      : 'Descargar ZIP'
+                      ? '⎙ Descargar Imagen' 
+                      : '⎙ Descargar ZIP'
                     }
                   </button>
                 </div>
