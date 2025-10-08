@@ -430,10 +430,11 @@ def process_single_image(image_info, session_folder, options):
         
         if os.path.exists(final_path):
             final_size = os.path.getsize(final_path)
-            size_reduction = ((final_size - original_size) / original_size) * 100
-           
-            if size_reduction < 0: 
-                print(f"✓ {image_info['original_name']}: {original_size//1024}KB -> {final_size//1024}KB ({size_reduction:.1f}%)")
+          
+            size_reduction = ((original_size - final_size) / original_size) * 100
+
+            if size_reduction < 0:  
+                size_reduction = ((original_size - final_size) / original_size) * 100
             else:
                 print(f"⚠ {image_info['original_name']}: {original_size//1024}KB -> {final_size//1024}KB (+{size_reduction:.1f}%)")
                         
@@ -445,8 +446,7 @@ def process_single_image(image_info, session_folder, options):
             result['size_reduction'] = size_reduction
             result['path'] = final_path
             result['preview_url'] = preview_url
-            
-            # Log mejorado
+        
             if size_reduction > 0:
                 print(f"✓ {image_info['original_name']}: {original_size//1024}KB -> {final_size//1024}KB (-{size_reduction:.1f}%)")
             else:
@@ -909,7 +909,7 @@ def get_image_dimensions(session_id):
     except Exception as e:
         return jsonify({'error': f'Error obteniendo dimensiones: {str(e)}'}), 500
 
-# ENDPOINT ADICIONAL: Limpieza manual (útil para testing)
+# ENDPOINT ADICIONAL: Limpieza manual 
 
 @app.route('/api/cleanup/<session_id>', methods=['DELETE'])
 def manual_cleanup(session_id):
@@ -963,8 +963,6 @@ if __name__ == '__main__':
     print(f" Formatos soportados: {', '.join(sorted(ALLOWED_EXTENSIONS))}")
     print(f" Servidor: http://localhost:5000")
     print(f" Health check: http://localhost:5000/api/health")
-    print(f" REMBG disponible: {REMBG_AVAILABLE}")
     print("=" * 70)
     
     app.run(debug=True, host='0.0.0.0', port=5000)
-

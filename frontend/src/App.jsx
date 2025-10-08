@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import ImageProcessor from './components/ImageProcessor';
 import HelpPage from './components/HelpPage';
@@ -8,19 +9,17 @@ import './App2.css';
 import './App3.css';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('home');
-
-  const handleNavigation = (page) => {
-    setCurrentPage(page);
-  };
-
   return (
-    <div>
-      {currentPage === 'home' && <LandingPage onNavigate={handleNavigation} />}
-      {currentPage === 'procesador' && <ImageProcessor onNavigate={handleNavigation} />}
-      {currentPage === 'ayuda' && <HelpPage onNavigate={handleNavigation} />}
-      {currentPage === 'contacto' && <ContactPage onNavigate={handleNavigation} />}
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/inicio" element={<LandingPage />} />
+        <Route path="/procesador" element={<ImageProcessor />} />
+        <Route path="/ayuda" element={<HelpPage />} />
+        <Route path="/contacto" element={<ContactPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

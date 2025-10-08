@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import logoImage from './image/TechResources.png';
 
-const LandingPage = ({ onNavigate }) => {
+const LandingPage = () => {
+  const navigate = useNavigate();
   const handleStartProcessing = () => {
-    onNavigate('procesador');
-  };
+  navigate('/procesador');
+};
 
   return (
     <div className="min-h-screen app-background">
@@ -19,16 +21,16 @@ const LandingPage = ({ onNavigate }) => {
             />
           </div>
           <nav className="navigation">
-            <button onClick={() => onNavigate('home')} className="nav-link nav-active">
+            <button onClick={() => navigate('/inicio')} className="nav-link nav-active">
               Inicio
             </button>
-            <button onClick={() => onNavigate('procesador')} className="nav-link">
+            <button onClick={() => navigate('/procesador')} className="nav-link">
               Procesador
             </button>
-            <button onClick={() => onNavigate('ayuda')} className="nav-link">
+            <button onClick={() => navigate('/ayuda')} className="nav-link">
               Ayuda
             </button>
-            <button onClick={() => onNavigate('contacto')} className="nav-link">
+            <button onClick={() => navigate('/contacto')} className="nav-link">
               Contacto
             </button>
           </nav>

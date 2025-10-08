@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import logoImage from './image/TechResources.png';
 
-const HelpPage = ({ onNavigate }) => {
+const HelpPage = () => {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('primerosPasos');
   const [openFaq, setOpenFaq] = useState(null);
 
@@ -169,6 +171,7 @@ const HelpPage = ({ onNavigate }) => {
               <span className="help-page-format-tag">WEBP</span>
               <span className="help-page-format-tag">BMP</span>
               <span className="help-page-format-tag">TIFF</span>
+              <span className="help-page-format-tag">SVG</span>
               <span className="help-page-format-tag">HEIC</span>
               <span className="help-page-format-tag">RAW</span>
               <span className="help-page-format-tag">ZIP</span>
@@ -362,19 +365,19 @@ const HelpPage = ({ onNavigate }) => {
             />
           </div>
           <nav className="navigation">
-            <button onClick={() => onNavigate('home')} className="nav-link">
-              Inicio
-            </button>
-            <button onClick={() => onNavigate('procesador')} className="nav-link">
-              Procesador
-            </button>
-            <button onClick={() => onNavigate('ayuda')} className="nav-link nav-active">
-              Ayuda
-            </button>
-            <button onClick={() => onNavigate('contacto')} className="nav-link">
-              Contacto
-            </button>
-          </nav>
+          <button onClick={() => navigate('/inicio')} className="nav-link">
+            Inicio
+          </button>
+          <button onClick={() => navigate('/procesador')} className="nav-link">
+            Procesador
+          </button>
+          <button onClick={() => navigate('/ayuda')} className="nav-link nav-active">
+            Ayuda
+          </button>
+          <button onClick={() => navigate('/contacto')} className="nav-link">
+            Contacto
+          </button>
+        </nav>
         </div>
       </header>
 

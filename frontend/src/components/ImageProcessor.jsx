@@ -1,9 +1,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProportionalResize } from '../hooks/useProportionalResize';
 import logoImage from './image/TechResources.png';
 import { useProcessingStates } from '../hooks/useProcessingStates';
 
-const ImageProcessor = ({ onNavigate }) => {
+const ImageProcessor = () => {
+  const navigate = useNavigate();
   const [backgroundRemoval, setBackgroundRemoval] = useState(false);
   const [resize, setResize] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -16,8 +18,8 @@ const ImageProcessor = ({ onNavigate }) => {
   const [switchProcessing, setSwitchProcessing] = useState(false);
   const fileInputRef = useRef(null);
   const API_BASE_URL = 'http://localhost:5000/api';
-
- const {
+ 
+  const {
      width,
      height,
      originalDimensions,
@@ -191,19 +193,12 @@ const ImageProcessor = ({ onNavigate }) => {
          prev.map(file => {
            const result = data.results.find(r => r.id === file.id);
            if (result && result.success) {
-           
-             const sizeChange = result.size_change !== undefined 
-               ? result.size_change 
-               : result.size_reduction 
-                 ? -result.size_reduction 
-                 : 0;
-             
              return {
                ...file,
                state: PROCESSING_STATES.COMPLETED,
                progress: 100,
                currentSize: result.final_size || file.originalSize,
-               reductionPercentage: -sizeChange, 
+               reductionPercentage: result.size_reduction || 0,
                operations: result.operations || [],
                preview: result.preview_url || file.preview
              };
@@ -217,7 +212,7 @@ const ImageProcessor = ({ onNavigate }) => {
            return file;
          })
        );
-         
+       
        setProcessedResults(data.results);
        
      } catch (err) {
@@ -336,18 +331,20 @@ const ImageProcessor = ({ onNavigate }) => {
             />
           </div>
           <nav className="navigation">
-            <button onClick={() => onNavigate('home')} className="nav-link">
+           <nav className="navigation">
+            <button onClick={() => navigate('/inicio')} className="nav-link">
               Inicio
             </button>
-            <button onClick={() => onNavigate('procesador')} className="nav-link nav-active">
+            <button onClick={() => navigate('/procesador')} className="nav-link nav-active">
               Procesador
             </button>
-            <button onClick={() => onNavigate('ayuda')} className="nav-link">
+            <button onClick={() => navigate('/ayuda')} className="nav-link">
               Ayuda
             </button>
-            <button onClick={() => onNavigate('contacto')} className="nav-link">
+            <button onClick={() => navigate('/contacto')} className="nav-link">
               Contacto
             </button>
+          </nav>
           </nav>
         </div>
       </header>
@@ -712,24 +709,31 @@ const ImageProcessor = ({ onNavigate }) => {
                         )}
                         
                         <div className="processing-details">
-                          <div className="size-info">
-                            <span className="size-original">
-                              {(file.originalSize / 1024).toFixed(1)} KB
-                            </span>
-                            {file.currentSize !== file.originalSize && (
-                              <>
-                                <span className="size-arrow">→</span>
-                                <span className="size-final">
-                                  {(file.currentSize / 1024).toFixed(1)} KB
-                                </span>
-                              </>
-                            )}
-                          </div>
+                        <div className="size-info">
+                          <span className="size-original">
+                            {(file.originalSize / 1024).toFixed(1)} KB
+                          </span>
+                          {file.currentSize !== file.originalSize && (
+                            <>
+                              <span className="size-arrow">→</span>
+                              <span className="size-final">
+                                {(file.currentSize / 1024).toFixed(1)} KB
+                              </span>
+                            </>
+                          )}
+                        </div>
                           
                           {file.reductionPercentage !== 0 && (
                             <div className="reduction-info">
-                              <span className={`reduction-badge ${file.reductionPercentage < 0 ? 'increase' : ''}`}>
-                                {file.reductionPercentage > 0 ? '+' : '-'}{Math.abs(file.reductionPercentage).toFixed(0)}%
+                              <span className={`reduction-badge ${
+                                file.reductionPercentage < 0 
+                                  ? 'reduction-positive'   
+                                  : 'reduction-negative'   
+                              }`}>
+                                {file.reductionPercentage < 0 
+                                  ? `+${Math.min(Math.abs(file.reductionPercentage), 100).toFixed(0)}%`  
+                                  : `-${Math.min(file.reductionPercentage, 100).toFixed(0)}%`          
+                                }
                               </span>
                             </div>
                           )}
@@ -741,7 +745,7 @@ const ImageProcessor = ({ onNavigate }) => {
                               <span key={i} className="operation-tag">{op}</span>
                             ))}
                           </div>
-                        )}
+                        )}      
                       </div>
                     </div>
                   ))}
